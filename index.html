@@ -41,6 +41,13 @@
     .cap { position:absolute; left:12px; right:12px; bottom:12px; background:var(--brand-600); color:#fff; text-align:center; padding:6px 10px; border-radius:999px; font-size:12px; }
 
     .role { font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); }
+    .preview{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; box-shadow:0 4px 16px rgba(0,0,0,.06); max-width:460px; }
+    .preview .short{ font-style:italic; margin-top:6px; }
+    .preview .actions{ display:flex; align-items:center; gap:10px; margin-top:10px; }
+    .btn{ appearance:none; border:1px solid var(--line); background:#fff; border-radius:999px; padding:6px 10px; font-size:12px; cursor:pointer; }
+    .btn:hover{ box-shadow:0 0 0 3px var(--brand-100); border-color: var(--brand-600); }
+    .chev{ display:inline-block; transition: transform .2s ease; }
+    .chev.open{ transform: rotate(180deg); }
     .expand { margin-top:10px; background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; box-shadow:0 12px 40px rgba(0,0,0,.12); max-width:460px; }
     .expand h4{ margin:0 0 6px; font-size:16px; color:var(--brand-600);} 
     .expand p{ margin:6px 0; line-height:1.6; }
@@ -77,10 +84,16 @@
             <img src={person.headshot} alt={person.name} />
             <div className="cap">{person.name}</div>
           </div>
-          {/* Static short blurb */}
+          {/* Static short preview box */}
           <div style={{maxWidth:460}}>
-            <div className="role" style={{marginBottom:6}}>{person.title}</div>
-            <div style={{fontStyle:'italic'}}>“{person.quote}”</div>
+            <div className="preview" onClick={()=>onToggle(person.id)}>
+              <div className="role">{person.title}</div>
+              <div className="short">“{person.quote}”</div>
+              <div className="actions">
+                <button className="btn" onClick={(e)=>{e.stopPropagation(); navigator.clipboard?.writeText(person.quote).catch(()=>{});}}>Copy quote</button>
+                <span className={`chev ${expanded? 'open':''}`} aria-hidden>▾</span>
+              </div>
+            </div>
             {expanded && (
               <div className="expand">
                 <h4>Longer insight</h4>
