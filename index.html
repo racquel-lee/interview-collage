@@ -8,53 +8,35 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
-    :root{ --bg:#e1d8d5; --ink:#643335; --muted:#855c5c; --line:#e5cfcf; --ring:#e1d8d5; --shadow:0 6px 20px rgba(100,51,53,.15);
-       --brand:#ef3340; --brand-600:#c52a34; --brand-100:#fdecee; --accent:#643335; }
+    :root{ --bg:#e1d8d5; --ink:#643335; --muted:#855c5c; --line:#e5cfcf; --ring:#e1d8d5; --brand:#ef3340; --brand-600:#c52a34; --brand-100:#fdecee; }
     *{ box-sizing:border-box; }
     body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; background:var(--bg); margin:0; color:var(--ink); }
     .container { max-width: 1100px; margin:0 auto; padding: 2.25rem 1rem; }
     h1 { font-size: clamp(28px, 3vw, 42px); font-weight:800; margin:0 0 .35rem; color: var(--brand-600); }
     .muted { color: var(--muted); }
-    .search { margin:1rem 0; width:100%; max-width:520px; padding:14px 16px; border:2px solid var(--line); border-radius:14px; background:#fff; font-size:16px; transition:border-color .15s, box-shadow .15s; }
-    .search:focus { outline:none; border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-100); }
 
-    /* PATH */
+    .numbers { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin: 1rem 0 1.5rem; }
+    .num { flex:1 1 220px; background:var(--brand-100); border:1px solid var(--line); border-radius:12px; padding:1rem; text-align:center; }
+    .num .k{ font-size:28px; font-weight:700; color:var(--brand-600); }
+    .num .l{ font-size:14px; color:var(--muted); }
+
     .path { position:relative; padding: 24px 0 8px; }
-    .path-line { position:absolute; left:50%; top:0; bottom:0; width:2px; background:linear-gradient(to bottom, transparent, var(--brand-100), transparent); transform:translateX(-50%); pointer-events:none; z-index:0; }
-    .row { position:relative; display:flex; align-items:center; gap:24px; margin: 4rem 0; }
+    .center-line { position:absolute; left:50%; top:0; bottom:0; width:2px; background:linear-gradient(to bottom, transparent, var(--brand-100), transparent); transform:translateX(-50%); pointer-events:none; z-index:0; }
+    .row { position:relative; display:flex; align-items:center; gap:24px; margin: 3.5rem 0; }
     .row.left { justify-content:flex-start; }
     .row.right { justify-content:flex-end; }
-    .connector { position:absolute; top:50%; height:3px; width:min(260px, 20vw); background:var(--brand-100); z-index:0; }
+    .row .connector { position:absolute; top:50%; height:3px; width:min(260px, 22vw); background:var(--brand-100); z-index:0; }
     .row.left .connector { right: calc(50% + 1px); }
     .row.right .connector { left: calc(50% + 1px); }
 
-    /* CIRCLES */
-    .circle-btn { position:relative; display:block; border-radius:999px; overflow:hidden; box-shadow:var(--shadow); border:3px solid var(--ring); background:#fff; cursor:pointer; transition: box-shadow .25s; }
-    .circle-btn:hover { box-shadow:0 0 0 4px var(--brand-100), 0 0 12px var(--brand); }
-    .circle-img { display:block; width:100%; height:100%; object-fit:cover; }
-    .initials { display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-weight:700; color:#64748b; background:#f1f5f9; font-size: 32px; }
+    .circle { position:relative; display:block; border-radius:999px; overflow:hidden; border:3px solid var(--ring); background:#fff; box-shadow:0 6px 20px rgba(100,51,53,.15); cursor:pointer; transition: box-shadow .25s; }
+    .circle:hover { box-shadow:0 0 0 5px var(--brand-100), 0 0 16px var(--brand); }
+    .circle img { width:100%; height:100%; object-fit:cover; display:block; }
     .cap { position:absolute; left:12px; right:12px; bottom:12px; background:var(--brand-600); color:#fff; text-align:center; padding:6px 10px; border-radius:999px; font-size:12px; }
 
-    /* BLURB */
-    .blurb { position:relative; z-index:2; max-width: 420px; padding:12px 14px; font-size:16px; color:#111; font-style:italic; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 3px 14px rgba(0,0,0,.08); }
+    .blurb { position:relative; z-index:2; max-width: 440px; padding:12px 14px; font-size:16px; color:#111; font-style:italic; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 3px 14px rgba(0,0,0,.08); }
     .role { font-size:12px; letter-spacing:.04em; text-transform:uppercase; color: var(--muted); margin-bottom: 6px; font-style: normal; }
-    .chips { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
-    .chip { font-size:12px; border:1px solid var(--line); border-radius:999px; padding:3px 9px; color:var(--brand-600); background:var(--brand-100); }
 
-    /* MODAL */
-    .modalBack { position: fixed; inset: 0; background: rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; padding:16px; }
-    .modal { width:min(760px, 96vw); background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 20px 80px rgba(0,0,0,.2); }
-    .modalHead { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--line); background: var(--brand); color:#fff; }
-    .modalTitle { margin:0; font-size:22px; font-weight:700; }
-    .modalBody { display:grid; gap:20px; grid-template-columns: 1fr; padding:18px; }
-    @media (min-width: 900px){ .modalBody { grid-template-columns: 2fr 1fr; } }
-    .metrics { display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; text-align:center; }
-    .metric { border:1px solid var(--line); border-radius:12px; padding:14px; background:#fff; }
-    .metric .k { font-weight:700; font-size: 22px; }
-    .metric .l { font-size:12px; color:var(--muted); }
-    .close { appearance:none; border:none; background:transparent; cursor:pointer; font-size:22px; line-height:1; padding:6px; color:#fff; }
-
-    /* ANIM */
     .fade { opacity:0; transform: translateY(10px); animation: fade .45s ease-out forwards; }
     @keyframes fade { to { opacity:1; transform:none; } }
   </style>
@@ -65,101 +47,62 @@
   <script type="text/babel">
     const { useState, useMemo } = React;
 
-    const DATA = [
-      { id:"p1", name:"Tony G.", title:"Community Companion Volunteer, Neighbor", headshot:"https://picsum.photos/seed/tonyg/800", quote:"It's just much bigger than I thought.", tags:["scope","programs","community"], numbers:{}, summary:"Surprised by the size and reach of programs—both inside the building and across the city.", details:"The scope, frankly, because there are so many arms and legs and tentacles that go out into the community, even just getting the tour with you today and hearing about all the different programs and not only what happens here in this building but what happens in other places within the city and how far reaching it is. It's just much bigger than I thought." },
-      { id:"p2", name:"Lynn", title:"Settlement House Advocate, Neighbor, Former Staff", headshot:"https://picsum.photos/seed/lynn/800", quote:"Settlement houses are for everybody, and we all have the same basic human needs, no matter what our economic situation is.", tags:["settlement-house","belonging","equity"], numbers:{}, summary:"Believes the settlement house model serves the whole neighborhood—not only low-income residents.", details:"Among the things I love about the settlement house model... settlement houses are for everybody, and we all have the same basic human needs, no matter what our economic situation is. I think there are financial choices to be made about where you invest flexible money, and economic need is a key criterion in making those decisions. But I think a settlement house is not a place only for low income people. It's a place for people of the neighborhood. We all want our kids to learn and we all want to age safely and we all want compassion when we're in pain." },
-      { id:"p3", name:"Amra", title:"Neighbor, mom", headshot:"https://picsum.photos/seed/amra/800", quote:"I feel like it serves a sliver of people that I'm not a part of.", tags:["inclusion","access","engagement"], numbers:{}, summary:"Wants more ways for neighborhood families to participate; currently feels the organization is insular.", details:"I would like to be more involved, and I would like my kids to be involved as well. Maybe there's a way to expand and open the door to kids and families... But I feel like it's sort of insular. I don't feel very connected to it as a person who lives across the street. I feel like it serves a sliver of people that I'm not a part of." },
-      { id:"p4", name:"Rosie", title:"Neighbor, mom", headshot:"https://picsum.photos/seed/rosie/800", quote:"We have something right in our backyard, but we have no access to it.", tags:["access","aquatics","families"], numbers:{}, summary:"Calls out lack of access to swimming facilities for kids during most of the year despite nearby resources.", details:"Our kids have no place to learn how to swim. Even if we wanted private swimming classes, you have to go to certain places, and if they want to swim during winter or fall or spring - not just summer - there's no option. Whereas there is this option that's right there, but it's only limited to certain families... We have something right in our backyard, but we have no access to it. That's as simple as I put it." },
-      { id:"p5", name:"Jade", title:"Board member, daughter of OAC members", headshot:"https://picsum.photos/seed/jade/800", quote:"It's been life changing for them.", tags:["board","family","impact"], numbers:{}, summary:"Describes the program's transformative impact on her parents' daily life and community.", details:"It's been life changing for them... They go for breakfast almost every day. They do swim couple of times a week. They have joined hobbies they never did their entire life... because they grew up in China during the Cultural Revolution, where arts were shut down, schools were shut down. My mom was sent to like a labor camp to grow crops. So it's like a time where they're actually exploring other parts of themselves... My mom has found that she is great at painting. So she's been doing watercolors, acrylics... More important than that, they built community. They have made some really great friends." },
-      { id:"p6", name:"Steve", title:"Board Member, Neighbor", headshot:"https://picsum.photos/seed/steve/800", quote:"Good boards bridge vision and neighborhood needs.", tags:["board","vision"], numbers:{}, summary:"Stresses that boards should balance strategy with local realities.", details:"A strong board creates space for new ideas but grounds them in what the community actually needs." },
-      { id:"p7", name:"Arabelle", title:"Member, Neighbor", headshot:"https://picsum.photos/seed/arabelle/800", quote:"I joined because I wanted a space to connect.", tags:["member","connection"], numbers:{}, summary:"Sees membership as a doorway to connection and belonging.", details:"Being a member has given me chances to meet neighbors, join activities, and feel like I belong here." },
-      { id:"p8", name:"Julie", title:"Member, Neighbor", headshot:"https://picsum.photos/seed/julie/800", quote:"Membership means shared responsibility.", tags:["member","community"], numbers:{}, summary:"Feels membership is about showing up and contributing to collective life.", details:"It’s not just about receiving programs but being part of sustaining them." },
-      { id:"p9", name:"Tony L.", title:"Member", headshot:"https://picsum.photos/seed/tonyl/800", quote:"Showing up is powerful in itself.", tags:["member","participation"], numbers:{}, summary:"Believes consistent presence builds trust.", details:"Even just being present and engaged makes a difference in how neighbors relate and trust each other." }
+    const PEOPLE = [
+      { id:"p1", name:"Tony G.", title:"Community Companion Volunteer, Neighbor", headshot:"https://picsum.photos/seed/tonyg/800", quote:"It's just much bigger than I thought." },
+      { id:"p2", name:"Lynn", title:"Settlement House Advocate, Neighbor, Former Staff", headshot:"https://picsum.photos/seed/lynn/800", quote:"Settlement houses are for everybody…" },
+      { id:"p3", name:"Amra", title:"Neighbor, mom", headshot:"https://picsum.photos/seed/amra/800", quote:"I feel like it serves a sliver of people that I'm not a part of." },
+      { id:"p4", name:"Rosie", title:"Neighbor, mom", headshot:"https://picsum.photos/seed/rosie/800", quote:"We have something right in our backyard, but we have no access to it." },
+      { id:"p5", name:"Jade", title:"Board member, daughter of OAC members", headshot:"https://picsum.photos/seed/jade/800", quote:"It's been life changing for them." },
+      { id:"p6", name:"Steve", title:"Board Member, Neighbor", headshot:"https://picsum.photos/seed/steve/800", quote:"Good boards bridge vision and neighborhood needs." },
+      { id:"p7", name:"Arabelle", title:"Member, Neighbor", headshot:"https://picsum.photos/seed/arabelle/800", quote:"I joined because I wanted a space to connect." },
+      { id:"p8", name:"Julie", title:"Member, Neighbor", headshot:"https://picsum.photos/seed/julie/800", quote:"Membership means shared responsibility." },
+      { id:"p9", name:"Tony L.", title:"Member", headshot:"https://picsum.photos/seed/tonyl/800", quote:"Showing up is powerful in itself." }
     ];
 
-    const initials = (name) => name.split(" ").map(p=>p[0]).join("").slice(0,2).toUpperCase();
-
-    function Modal({ person, onClose }){
-      if(!person) return null;
+    function CircleRow({ person, align='left' }){
+      const px = 260; // big circles
       return (
-        <div className="modalBack" onClick={onClose}>
-          <div className="modal" onClick={(e)=>e.stopPropagation()}>
-            <div className="modalHead">
-              <div>
-                <h2 className="modalTitle">{person.name}</h2>
-                <div className="muted">{person.title}</div>
-              </div>
-              <button className="close" onClick={onClose} aria-label="Close">×</button>
-            </div>
-            <div className="modalBody">
-              <div>
-                <p style={{fontSize:'16px', lineHeight:1.6}}><em>“{person.quote}”</em></p>
-                <p className="muted" style={{marginTop:8}}>{person.summary}</p>
-                <div className="chips">{(person.tags||[]).map(t=> <span key={t} className="chip">{t}</span>)}</div>
-                <h3 style={{marginTop:16, fontSize:15, fontWeight:700}}>Context & Analysis</h3>
-                <p style={{lineHeight:1.7}}>{person.details}</p>
-              </div>
-              <div>
-                <div className="metrics">
-                  <div className="metric"><div className="l">N</div><div className="k">{person.numbers?.sampleSize ?? '–'}</div></div>
-                  <div className="metric"><div className="l">Sentiment</div><div className="k">{person.numbers?.sentiment ?? '–'}</div></div>
-                  <div className="metric"><div className="l">Mentions</div><div className="k">{person.numbers?.mentions ?? '–'}</div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    function CircleRow({ person, align='left', size='md', onOpen }){
-      const sizeMap = { sm: 200, md: 240, lg: 280 };
-      const px = sizeMap[size] || 220;
-      return (
-        <div className={"row "+align+" fade"}>
+        <div className={`row ${align} fade`}>
           <div className="connector" aria-hidden="true"></div>
-          <button className="circle-btn" onClick={()=>onOpen(person)} style={{ width:px, height:px }} aria-label={`Open details for ${person.name}`}>
-            {person.headshot ? (
-              <img className="circle-img" src={person.headshot} alt={person.name} />
-            ) : (
-              <div className="initials">{initials(person.name)}</div>
-            )}
+          <a className="circle" style={{ width:px, height:px }} href="#" onClick={(e)=>e.preventDefault()}>
+            <img src={person.headshot} alt={person.name} />
             <div className="cap">{person.name}</div>
-          </button>
+          </a>
           <div className="blurb">
             <div className="role">{person.title}</div>
             <div><em>“{person.quote}”</em></div>
-            <div className="chips">{(person.tags||[]).slice(0,3).map(t=> <span key={t} className="chip">{t}</span>)}</div>
           </div>
-        </div>
-      );
-    }
-
-    function WavyPath({ people, onOpen }){
-      return (
-        <div className="path">
-          <div className="path-line" aria-hidden="true"></div>
-          {people.map((p, i) => (
-            <CircleRow key={p.id} person={p} align={i%2===0? 'left': 'right'} size={ i%5===0? 'lg' : i%3===0? 'sm' : 'md' } onOpen={onOpen} />
-          ))}
         </div>
       );
     }
 
     function App(){
-      const [query,setQuery] = useState("");
-      const [selected,setSelected] = useState(null);
-
+      const [q,setQ] = useState("");
       const filtered = useMemo(()=>{
-        const q=query.trim().toLowerCase();
-        return DATA.filter(p =>
-          p.name.toLowerCase().includes(q) ||
-          p.title.toLowerCase().includes(q) ||
-          p.quote.toLowerCase().includes(q) ||
-          p.summary.toLowerCase().includes(q) ||
-          (p.tags||[]).some(t => t.toLowerCase().includes(q))
-        );
-      },[query]);
+        const s=q.trim().toLowerCase();
+        return PEOPLE.filter(p => p.name.toLowerCase().includes(s) || p.title.toLowerCase().includes(s) || p.quote.toLowerCase().includes(s));
+      },[q]);
 
       return (
         <div className="container">
+          <div className="numbers">
+            <div className="num"><div className="k">785</div><div className="l">Survey Responses</div></div>
+            <div className="num"><div className="k">25</div><div className="l">Interviews</div></div>
+          </div>
+          <h1>Community Voices Project</h1>
+          <div className="muted">Click a face for a quote. (Pop-up details coming back next.)</div>
+          <input aria-label="Search" placeholder="Search…" value={q} onChange={e=>setQ(e.target.value)} style={{margin:"1rem 0", width:"100%", maxWidth:520, padding:"14px 16px", border:"2px solid var(--line)", borderRadius:14, background:"#fff", fontSize:16}} />
+          <div className="path">
+            <div className="center-line" aria-hidden="true"></div>
+            {filtered.map((p,i)=> (
+              <CircleRow key={p.id} person={p} align={i%2===0? 'left':'right'} />
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>
