@@ -3,53 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Interview Insights Collage</title>
+  <title>Community Voices Project</title>
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
-    :root{ --bg:#fafafa; --ink:#111; --muted:#6b7280; --line:#e5e7eb; --ring:#e5e7eb; --shadow:0 6px 20px rgba(0,0,0,.08); }
+    :root{ --bg:#e1d8d5; --ink:#643335; --muted:#855c5c; --line:#e5cfcf; --ring:#e1d8d5; --shadow:0 6px 20px rgba(100,51,53,.15);
+       --brand:#ef3340; --brand-600:#c52a34; --brand-100:#fdecee; --accent:#643335; }
     *{ box-sizing:border-box; }
     body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; background:var(--bg); margin:0; color:var(--ink); }
     .container { max-width: 1100px; margin:0 auto; padding: 2.25rem 1rem; }
-    h1 { font-size: clamp(24px, 3vw, 36px); font-weight:700; margin:0 0 .35rem; }
+    h1 { font-size: clamp(28px, 3vw, 42px); font-weight:800; margin:0 0 .35rem; }
     .muted { color: var(--muted); }
-    .search { margin:1rem 0; width:100%; max-width:480px; padding:12px 14px; border:1px solid var(--line); border-radius:12px; background:#fff; }
+    .search { margin:1rem 0; width:100%; max-width:520px; padding:14px 16px; border:1px solid var(--line); border-radius:14px; background:#fff; font-size:16px; }
 
     /* PATH */
     .path { position:relative; padding: 24px 0 8px; }
     .path-line { position:absolute; left:50%; top:0; bottom:0; width:2px; background:linear-gradient(to bottom, transparent, var(--line), transparent); transform:translateX(-50%); pointer-events:none; }
-    .row { position:relative; display:flex; align-items:center; gap:18px; margin: 3rem 0; }
+    .row { position:relative; display:flex; align-items:center; gap:24px; margin: 4rem 0; }
     .row.left { justify-content:flex-start; }
     .row.right { justify-content:flex-end; }
-    .connector { position:absolute; top:50%; height:2px; width:min(220px, 16vw); background:var(--line); }
+    .connector { position:absolute; top:50%; height:3px; width:min(260px, 20vw); background:var(--line); }
     .row.left .connector { right: calc(50% + 1px); }
     .row.right .connector { left: calc(50% + 1px); }
 
     /* CIRCLES */
-    .circle-btn { position:relative; display:block; border-radius:999px; overflow:hidden; box-shadow:var(--shadow); border:2px solid var(--ring); background:#fff; cursor:pointer; }
+    .circle-btn { position:relative; display:block; border-radius:999px; overflow:hidden; box-shadow:var(--shadow); border:3px solid var(--ring); background:#fff; cursor:pointer; }
     .circle-img { display:block; width:100%; height:100%; object-fit:cover; }
-    .initials { display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-weight:700; color:#64748b; background:#f1f5f9; font-size: 28px; }
-    .cap { position:absolute; left:10px; right:10px; bottom:10px; background:rgba(0,0,0,.62); color:#fff; text-align:center; padding:6px 8px; border-radius:999px; font-size:11px; }
+    .initials { display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-weight:700; color:#64748b; background:#f1f5f9; font-size: 32px; }
+    .cap { position:absolute; left:12px; right:12px; bottom:12px; background:rgba(0,0,0,.65); color:#fff; text-align:center; padding:6px 10px; border-radius:999px; font-size:12px; }
 
     /* BLURB */
-    .blurb { max-width: 380px; padding:10px 12px; font-size:15px; color:#111; font-style:italic; background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,.06); }
-    .role { font-size:11px; letter-spacing:.04em; text-transform:uppercase; color: var(--muted); margin-bottom: 6px; font-style: normal; }
+    .blurb { max-width: 420px; padding:12px 14px; font-size:16px; color:#111; font-style:italic; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 3px 14px rgba(0,0,0,.08); }
+    .role { font-size:12px; letter-spacing:.04em; text-transform:uppercase; color: var(--muted); margin-bottom: 6px; font-style: normal; }
     .chips { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
-    .chip { font-size:11px; border:1px solid var(--line); border-radius:999px; padding:2px 8px; color:#475569; background:#fff; }
+    .chip { font-size:12px; border:1px solid var(--line); border-radius:999px; padding:3px 9px; color:#475569; background:#fff; }
 
     /* MODAL */
     .modalBack { position: fixed; inset: 0; background: rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; padding:16px; }
     .modal { width:min(760px, 96vw); background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 20px 80px rgba(0,0,0,.2); }
     .modalHead { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--line); }
-    .modalTitle { margin:0; font-size:20px; font-weight:700; }
-    .modalBody { display:grid; gap:18px; grid-template-columns: 1fr; padding:16px; }
+    .modalTitle { margin:0; font-size:22px; font-weight:700; }
+    .modalBody { display:grid; gap:20px; grid-template-columns: 1fr; padding:18px; }
     @media (min-width: 900px){ .modalBody { grid-template-columns: 2fr 1fr; } }
-    .metrics { display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; text-align:center; }
-    .metric { border:1px solid var(--line); border-radius:12px; padding:12px; background:#fff; }
-    .metric .k { font-weight:700; font-size: 20px; }
-    .metric .l { font-size:11px; color:var(--muted); }
-    .close { appearance:none; border:none; background:transparent; cursor:pointer; font-size:20px; line-height:1; padding:4px; }
+    .metrics { display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; text-align:center; }
+    .metric { border:1px solid var(--line); border-radius:12px; padding:14px; background:#fff; }
+    .metric .k { font-weight:700; font-size: 22px; }
+    .metric .l { font-size:12px; color:var(--muted); }
+    .close { appearance:none; border:none; background:transparent; cursor:pointer; font-size:22px; line-height:1; padding:6px; }
 
     /* ANIM */
     .fade { opacity:0; transform: translateY(10px); animation: fade .45s ease-out forwards; }
@@ -63,10 +64,10 @@
     const { useState, useMemo } = React;
 
     const DATA = [
-      { id:"p1", name:"Alex Kim", title:"Nurse Manager", headshot:"https://images.unsplash.com/photo-1603415526960-f7e0328d13cf?q=80&w=400", quote:"We lose context during handoffs—people need one clear source of truth.", tags:["handoff","ops","pain-point"], numbers:{ sampleSize:12, sentiment:0.76, mentions:18 }, summary:"Handoffs are inconsistent across units; staff maintain personal notes.", details:"Across 12 interviews, handoffs surfaced as the #1 friction. People rely on unofficial documents and hallway updates."},
-      { id:"p2", name:"Priya Shah", title:"Program Analyst", headshot:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400", quote:"Dashboards exist, but no one trusts them without the underlying story.", tags:["dashboard","trust","insight"], numbers:{ sampleSize:9, sentiment:0.61, mentions:11 }, summary:"Stakeholders want provenance and narrative with metrics to build trust.", details:"Participants asked for annotations and rationale alongside metrics."},
-      { id:"p3", name:"Miguel Ortiz", title:"Frontline Staff", headshot:"https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=400", quote:"Training is a firehose. I need 5‑minute refreshers in the flow of work.", tags:["training","microlearning"], numbers:{ sampleSize:15, sentiment:0.82, mentions:22 }, summary:"Preference for short, embedded refreshers over long sessions.", details:"Microlearning and just-in-time tooltips were repeatedly requested."},
-      { id:"p4", name:"Jada Lee", title:"Director", headshot:"https://images.unsplash.com/photo-1546967191-fdfb13ed6b1e?q=80&w=400", quote:"Ownership is fuzzy. Who closes the loop when issues pop up?", tags:["ownership","governance"], numbers:{ sampleSize:7, sentiment:0.55, mentions:14 }, summary:"Ambiguity around roles leads to drift and duplicated work.", details:"Respondents want a transparent queue with clear DRIs, SLAs, and status badges."}
+      { id:"p1", name:"Alex Kim", title:"Nurse Manager", headshot:"https://picsum.photos/seed/alexkim/600", quote:"We lose context during handoffs—people need one clear source of truth.", tags:["handoff","ops","pain-point"], numbers:{ sampleSize:12, sentiment:0.76, mentions:18 }, summary:"Handoffs are inconsistent across units; staff maintain personal notes.", details:"Across 12 interviews, handoffs surfaced as the #1 friction. People rely on unofficial documents and hallway updates."},
+      { id:"p2", name:"Priya Shah", title:"Program Analyst", headshot:"https://picsum.photos/seed/priyashah/600", quote:"Dashboards exist, but no one trusts them without the underlying story.", tags:["dashboard","trust","insight"], numbers:{ sampleSize:9, sentiment:0.61, mentions:11 }, summary:"Stakeholders want provenance and narrative with metrics to build trust.", details:"Participants asked for annotations and rationale alongside metrics."},
+      { id:"p3", name:"Miguel Ortiz", title:"Frontline Staff", headshot:"https://picsum.photos/seed/miguelortiz/600", quote:"Training is a firehose. I need 5‑minute refreshers in the flow of work.", tags:["training","microlearning"], numbers:{ sampleSize:15, sentiment:0.82, mentions:22 }, summary:"Preference for short, embedded refreshers over long sessions.", details:"Microlearning and just-in-time tooltips were repeatedly requested."},
+      { id:"p4", name:"Jada Lee", title:"Director", headshot:"https://picsum.photos/seed/jadalee/600", quote:"Ownership is fuzzy. Who closes the loop when issues pop up?", tags:["ownership","governance"], numbers:{ sampleSize:7, sentiment:0.55, mentions:14 }, summary:"Ambiguity around roles leads to drift and duplicated work.", details:"Respondents want a transparent queue with clear DRIs, SLAs, and status badges."}
     ];
 
     const initials = (name) => name.split(" ").map(p=>p[0]).join("").slice(0,2).toUpperCase();
@@ -88,7 +89,7 @@
                 <p style={{fontSize:'16px', lineHeight:1.6}}><em>“{person.quote}”</em></p>
                 <p className="muted" style={{marginTop:8}}>{person.summary}</p>
                 <div className="chips">{(person.tags||[]).map(t=> <span key={t} className="chip">{t}</span>)}</div>
-                <h3 style={{marginTop:16, fontSize:14, fontWeight:700}}>Context & Analysis</h3>
+                <h3 style={{marginTop:16, fontSize:15, fontWeight:700}}>Context & Analysis</h3>
                 <p style={{lineHeight:1.7}}>{person.details}</p>
               </div>
               <div>
@@ -105,16 +106,15 @@
     }
 
     function CircleRow({ person, align='left', size='md', onOpen }){
-      const sizeMap = { sm: 140, md: 180, lg: 220 };
-      const px = sizeMap[size] || 180;
+      const sizeMap = { sm: 200, md: 240, lg: 280 };
+      const px = sizeMap[size] || 220;
       return (
         <div className={"row "+align+" fade"}>
           <div className="connector" aria-hidden="true"></div>
           {/* Circle */}
           <button className="circle-btn" onClick={()=>onOpen(person)} style={{ width:px, height:px }} aria-label={`Open details for ${person.name}`}>
             {person.headshot ? (
-              <img className="circle-img" src={person.headshot} alt={person.name}
-                   onError={(e)=>{ e.currentTarget.onerror=null; e.currentTarget.src=`https://picsum.photos/seed/${encodeURIComponent(person.name)}/600`; }} />
+              <img className="circle-img" src={person.headshot} alt={person.name} />
             ) : (
               <div className="initials">{initials(person.name)}</div>
             )}
@@ -160,16 +160,16 @@
         <div className="container">
           <div style={{display:'flex', gap:'1.5rem', flexWrap:'wrap', justifyContent:'center', marginBottom:'1.5rem'}}>
             <div style={{flex:'1 1 200px', background:'var(--brand-100)', border:'1px solid var(--ring)', borderRadius:'12px', padding:'1rem', textAlign:'center'}}>
-              <div style={{fontSize:'26px', fontWeight:700, color:'var(--brand-600)'}}>785</div>
-              <div className="muted" style={{fontSize:'13px'}}>Survey Responses</div>
+              <div style={{fontSize:'28px', fontWeight:700, color:'var(--brand-600)'}}>785</div>
+              <div className="muted" style={{fontSize:'14px'}}>Survey Responses</div>
             </div>
             <div style={{flex:'1 1 200px', background:'var(--brand-100)', border:'1px solid var(--ring)', borderRadius:'12px', padding:'1rem', textAlign:'center'}}>
-              <div style={{fontSize:'26px', fontWeight:700, color:'var(--brand-600)'}}>25</div>
-              <div className="muted" style={{fontSize:'13px'}}>Interviews</div>
+              <div style={{fontSize:'28px', fontWeight:700, color:'var(--brand-600)'}}>25</div>
+              <div className="muted" style={{fontSize:'14px'}}>Interviews</div>
             </div>
           </div>
-          <h1>Interview Insights Collage — Path View</h1>
-          <div className="muted">Playful winding path. Click a face for context & analysis.</div>
+          <h1>Community Voices Project</h1>
+          <div className="muted">Click a face for context & analysis.</div>
           <input className="search" placeholder="Search…" value={query} onChange={e=>setQuery(e.target.value)} />
           <WavyPath people={filtered} onOpen={setSelected} />
           <Modal person={selected} onClose={()=>setSelected(null)} />
@@ -181,4 +181,3 @@
   </script>
 </body>
 </html>
-
