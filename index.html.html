@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interview Insights Collage</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <style>
+    body { font-family: sans-serif; background:#fafafa; margin:0; padding:0; }
+    .container { max-width: 900px; margin:0 auto; padding: 2rem; }
+    h1 { font-size:2rem; font-weight:700; margin-bottom:0.5rem; }
+    .search { margin:1rem 0; }
+    .path-line { position:absolute; left:50%; top:0; bottom:0; width:2px; background:linear-gradient(to bottom, transparent, #ddd, transparent); }
+    .circle-tile { border-radius:50%; overflow:hidden; position:relative; box-shadow:0 2px 6px rgba(0,0,0,0.1); border:2px solid #eee; cursor:pointer; }
+    .circle-tile img { width:100%; height:100%; object-fit:cover; }
+    .circle-caption { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.6); color:white; font-size:10px; padding:2px 6px; border-radius:10px; }
+    .detail { position:fixed; inset:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; }
+    .detail-box { background:white; max-width:600px; padding:1rem; border-radius:12px; }
+    .tags span { display:inline-block; background:#eee; border-radius:10px; padding:2px 8px; margin-right:4px; font-size:12px; }
+
+    /* simple fade-in utility (avoid external libs) */
+    .fade { opacity: 0; transform: translateY(8px); animation: fadeIn .45s ease-out forwards; }
+    @keyframes fadeIn { to { opacity: 1; transform: none; } }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useMemo } = React;
+
+    const DATA = [
+      { id:"p1", name:"Alex Kim", title:"Nurse Manager", headshot:"https://images.unsplash.com/photo-1603415526960-f7e0328d13cf?q=80&w=300", quote:"We lose context during handoffs—people need one clear source of truth.", tags:["handoff","ops"], numbers:{ sampleSize:12, sentiment:0.76, mentions:18 }, summary:"Handoffs are inconsistent across units; staff maintain personal notes.", details:"Across 12 interviews, handoffs surfaced as the #1 friction. People rely on unofficial documents and hallway updates."},
+      { id:"p2", name:"Priya Shah", title:"Program Analyst", headshot:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=300", quote:"Dashboards exist, but no one trusts them without the underlying story.", tags:["dashboard","trust"], numbers:{ sampleSize:9, sentiment:0.61, mentions:11 }, summary:"Stakeholders want provenance and narrative with metrics to build trust.", details:"Participants asked for annotations and rationale alongside metrics."},
+      { id:"p3", name:"Miguel Ortiz", title:"Frontline Staff", headshot:"https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=300", quote:"Training is a firehose. I need 5‑minute refreshers in the flow of work.", tags:["training"], numbers:{ sampleSize:15, sentiment:0.82, mentions:22 }, summary:"Preference for short, embedded refreshers over long sessions.", details:"Microlearning and just-in-time tooltips were repeatedly requested."},
+      { id:"p4", name:"Jada Lee", title:"Director", headshot:"https://images.unsplash.com/photo-1546967191-fdfb13ed6b1e?q=80&w=300", quote:"Ownership is fuzzy. Who closes the loop when issues pop up?", tags:["ownership"], numbers:{ sampleSize:7, sentiment:0.55, mentions:14 }, summary:"Ambiguity around roles leads to drift and duplicated work.", details:"Respondents want a transparent queue with clear DRIs, SLAs, and status badges."}
+    ];
+
+    function CircleTile({ person, align, size, onOpen }) {
+      const sizePx = size==='lg'?160:size==='sm'?100:130;
+      return (
+        <div className="fade"$1>
+          <div className="circle-tile" style={{width:sizePx, height:sizePx}} onClick={()=>onOpen(person)}>
+            {person.headshot? <img src={person.headshot} alt={person.name}/> : <div>{person.name}</div>}
+            <div className="circle-caption">{person.name}</div>
+          </div>
+        </div>
+      );
+    }
+
+    function WavyPath({people,onOpen}) {
+      return (
+        <div style={{position:'relative'}}>
+          <div className="path-line"></div>
+          {people.map((p,i)=>(
+            <CircleTile key={p.id} person={p} onOpen={onOpen} align={i%2===0?'left':'right'} size={i%5===0?'lg':i%3===0?'sm':'md'} />
+          ))}
+        </div>
+      );
+    }
+
+    function Detail({person,onClose}){
+      if(!person) return null;
+      return (
+        <div className="detail" onClick={onClose}>
+          <div className="detail-box" onClick={e=>e.stopPropagation()}>
+            <h2>{person.name}</h2>
+            <h4>{person.title}</h4>
+            <p><em>“{person.quote}”</em></p>
+            <p>{person.summary}</p>
+            <div className="tags">{person.tags.map(t=><span key={t}>{t}</span>)}</div>
+            <p style={{marginTop:'1rem'}}>{person.details}</p>
+            <button onClick={onClose}>Close</button>
+          </div>
+        </div>
+      );
+    }
+
+    function App(){
+      const [query,setQuery]=useState("");
+      const [selected,setSelected]=useState(null);
+      const filtered = useMemo(()=>{
+        const q=query.toLowerCase();
+        return DATA.filter(p=>p.name.toLowerCase().includes(q)||p.title.toLowerCase().includes(q)||p.quote.toLowerCase().includes(q)||p.summary.toLowerCase().includes(q)||p.tags.some(t=>t.toLowerCase().includes(q)));
+      },[query]);
+      return (
+        <div className="container">
+          <h1>Interview Insights Collage — Path View</h1>
+          <input className="search" placeholder="Search…" value={query} onChange={e=>setQuery(e.target.value)} />
+          <WavyPath people={filtered} onOpen={setSelected} />
+          <Detail person={selected} onClose={()=>setSelected(null)} />
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>
