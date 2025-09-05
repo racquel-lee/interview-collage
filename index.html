@@ -1,100 +1,215 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Interview Insights Collage</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Interview Insights Collage — Path View</title>
+  <!-- React & ReactDOM from CDN; Babel compiles our JSX in the browser -->
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
-    body { font-family: sans-serif; background:#fafafa; margin:0; padding:0; }
-    .container { max-width: 900px; margin:0 auto; padding: 2rem; }
-    h1 { font-size:2rem; font-weight:700; margin-bottom:0.5rem; }
-    .search { margin:1rem 0; }
-    .path-line { position:absolute; left:50%; top:0; bottom:0; width:2px; background:linear-gradient(to bottom, transparent, #ddd, transparent); }
-    .circle-tile { border-radius:50%; overflow:hidden; position:relative; box-shadow:0 2px 6px rgba(0,0,0,0.1); border:2px solid #eee; cursor:pointer; }
-    .circle-tile img { width:100%; height:100%; object-fit:cover; }
-    .circle-caption { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.6); color:white; font-size:10px; padding:2px 6px; border-radius:10px; }
-    .detail { position:fixed; inset:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; }
-    .detail-box { background:white; max-width:600px; padding:1rem; border-radius:12px; }
-    .tags span { display:inline-block; background:#eee; border-radius:10px; padding:2px 8px; margin-right:4px; font-size:12px; }
-
-    /* simple fade-in utility (avoid external libs) */
-    .fade { opacity: 0; transform: translateY(8px); animation: fadeIn .45s ease-out forwards; }
-    @keyframes fadeIn { to { opacity: 1; transform: none; } }
+    :root{
+      --bg:#fafafa; --ink:#111; --muted:#6b7280; --line:#e5e7eb; --ring:#e5e7eb;
+      --shadow:0 6px 20px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--ink);}
+    .container{max-width:1040px;margin:0 auto;padding:32px 16px;}
+    h1{margin:0 0 6px;font-size:clamp(24px,3vw,36px)}
+    .muted{color:var(--muted)}
+    .search{width:100%;max-width:420px;margin:14px 0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff}
+    .path{position:relative;padding:24px 0 8px}
+    .path-line{position:absolute;left:50%;top:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,var(--line),transparent);transform:translateX(-50%);pointer-events:none}
+    .circle-tile{border-radius:999px;overflow:hidden;position:relative;box-shadow:var(--shadow);border:2px solid var(--ring);cursor:pointer;background:#fff}
+    .circle-tile img{width:100%;height:100%;object-fit:cover;display:block}
+    .circle-caption{position:absolute;left:8px;right:8px;bottom:8px;background:rgba(0,0,0,.62);color:#fff;text-align:center;padding:4px 6px;border-radius:999px;font-size:10px}
+    .blurb{max-width:320px;padding:6px 8px;font-size:14px;color:#111;font-style:italic;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+    .role{font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;font-style:normal}
+    .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+    .chip{font-size:10px;border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:#475569;background:#fff}
+    .fade{opacity:0;transform:translateY(8px);animation:fadeIn .45s ease-out forwards}
+    @keyframes fadeIn{to{opacity:1;transform:none}}
+    /* Modal */
+    .modalBack{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+    .modal{width:min(720px,96vw);background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 20px 80px rgba(0,0,0,.2)}
+    .modalHead{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
+    .modalTitle{margin:0;font-size:18px;font-weight:700}
+    .modalBody{display:grid;gap:16px;grid-template-columns:1fr;padding:16px}
+    @media(min-width:880px){.modalBody{grid-template-columns:2fr 1fr}}
+    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
+    .metric{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff}
+    .metric .k{font-weight:700;font-size:18px}
+    .metric .l{font-size:11px;color:var(--muted)}
+    .close{appearance:none;border:none;background:transparent;cursor:pointer;font-size:20px;line-height:1;padding:4px}
   </style>
 </head>
 <body>
-  <div id="root"></div>
+  <div class="container">
+    <h1>Interview Insights Collage</h1>
+    <div class="muted">Playful winding path. Click a face for context & analysis.</div>
+    <input id="search" class="search" placeholder="Search name, title, quote, or tag…" />
+    <div id="app"></div>
+  </div>
 
   <script type="text/babel">
-    const { useState, useMemo } = React;
+    const { useMemo, useState } = React;
 
+    // Demo data — you can edit later
     const DATA = [
-      { id:"p1", name:"Alex Kim", title:"Nurse Manager", headshot:"https://images.unsplash.com/photo-1603415526960-f7e0328d13cf?q=80&w=300", quote:"We lose context during handoffs—people need one clear source of truth.", tags:["handoff","ops"], numbers:{ sampleSize:12, sentiment:0.76, mentions:18 }, summary:"Handoffs are inconsistent across units; staff maintain personal notes.", details:"Across 12 interviews, handoffs surfaced as the #1 friction. People rely on unofficial documents and hallway updates."},
-      { id:"p2", name:"Priya Shah", title:"Program Analyst", headshot:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=300", quote:"Dashboards exist, but no one trusts them without the underlying story.", tags:["dashboard","trust"], numbers:{ sampleSize:9, sentiment:0.61, mentions:11 }, summary:"Stakeholders want provenance and narrative with metrics to build trust.", details:"Participants asked for annotations and rationale alongside metrics."},
-      { id:"p3", name:"Miguel Ortiz", title:"Frontline Staff", headshot:"https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=300", quote:"Training is a firehose. I need 5‑minute refreshers in the flow of work.", tags:["training"], numbers:{ sampleSize:15, sentiment:0.82, mentions:22 }, summary:"Preference for short, embedded refreshers over long sessions.", details:"Microlearning and just-in-time tooltips were repeatedly requested."},
-      { id:"p4", name:"Jada Lee", title:"Director", headshot:"https://images.unsplash.com/photo-1546967191-fdfb13ed6b1e?q=80&w=300", quote:"Ownership is fuzzy. Who closes the loop when issues pop up?", tags:["ownership"], numbers:{ sampleSize:7, sentiment:0.55, mentions:14 }, summary:"Ambiguity around roles leads to drift and duplicated work.", details:"Respondents want a transparent queue with clear DRIs, SLAs, and status badges."}
+      {
+        id: "p1",
+        name: "Alex Kim",
+        title: "Nurse Manager",
+        headshot: "https://images.unsplash.com/photo-1603415526960-f7e0328d13cf?q=80&w=300",
+        quote: "We lose context during handoffs—people need one clear source of truth.",
+        tags: ["handoff", "ops", "pain-point"],
+        numbers: { sampleSize: 12, sentiment: 0.76, mentions: 18 },
+        summary: "Handoffs are inconsistent across units; staff maintain personal notes.",
+        details:
+          "Across 12 interviews, handoffs surfaced as the #1 friction. People rely on unofficial documents and hallway updates."
+      },
+      {
+        id: "p2",
+        name: "Priya Shah",
+        title: "Program Analyst",
+        headshot: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=300",
+        quote: "Dashboards exist, but no one trusts them without the underlying story.",
+        tags: ["dashboard", "trust", "insight"],
+        numbers: { sampleSize: 9, sentiment: 0.61, mentions: 11 },
+        summary: "Stakeholders want provenance and narrative with metrics to build trust.",
+        details:
+          "Participants asked for annotations and rationale alongside metrics."
+      },
+      {
+        id: "p3",
+        name: "Miguel Ortiz",
+        title: "Frontline Staff",
+        headshot: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=300",
+        quote: "Training is a firehose. I need 5-minute refreshers in the flow of work.",
+        tags: ["training", "microlearning"],
+        numbers: { sampleSize: 15, sentiment: 0.82, mentions: 22 },
+        summary: "Preference for short, embedded refreshers over long sessions.",
+        details:
+          "Microlearning and just-in-time tooltips were repeatedly requested."
+      },
+      {
+        id: "p4",
+        name: "Jada Lee",
+        title: "Director",
+        headshot: "https://images.unsplash.com/photo-1546967191-fdfb13ed6b1e?q=80&w=300",
+        quote: "Ownership is fuzzy. Who closes the loop when issues pop up?",
+        tags: ["ownership", "governance"],
+        numbers: { sampleSize: 7, sentiment: 0.55, mentions: 14 },
+        summary: "Ambiguity around roles leads to drift and duplicated work.",
+        details:
+          "Respondents want a transparent queue with clear DRIs, SLAs, and status badges."
+      }
     ];
 
-    function CircleTile({ person, align, size, onOpen }) {
-      const sizePx = size==='lg'?160:size==='sm'?100:130;
+    const initials = (name) => name.split(" ").map(p => p[0]).join("").slice(0,2).toUpperCase();
+
+    function Modal({ person, onClose }) {
+      if (!person) return null;
       return (
-        <div className="fade"$1>
-          <div className="circle-tile" style={{width:sizePx, height:sizePx}} onClick={()=>onOpen(person)}>
-            {person.headshot? <img src={person.headshot} alt={person.name}/> : <div>{person.name}</div>}
-            <div className="circle-caption">{person.name}</div>
+        <div className="modalBack" onClick={onClose}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modalHead">
+              <div>
+                <h2 className="modalTitle">{person.name}</h2>
+                <div className="muted">{person.title}</div>
+              </div>
+              <button className="close" onClick={onClose} aria-label="Close">×</button>
+            </div>
+            <div className="modalBody">
+              <div>
+                <p style={{fontSize:'16px', lineHeight:1.6}}><em>“{person.quote}”</em></p>
+                <p className="muted" style={{marginTop:8}}>{person.summary}</p>
+                <div className="chips">
+                  {(person.tags||[]).map(t => <span key={t} className="chip">{t}</span>)}
+                </div>
+                <h3 style={{marginTop:16, fontSize:14, fontWeight:700}}>Context & Analysis</h3>
+                <p style={{lineHeight:1.7}}>{person.details}</p>
+              </div>
+              <div>
+                <div className="metrics">
+                  <div className="metric"><div className="l">N</div><div className="k">{person.numbers?.sampleSize ?? '–'}</div></div>
+                  <div className="metric"><div className="l">Sentiment</div><div className="k">{person.numbers?.sentiment ?? '–'}</div></div>
+                  <div className="metric"><div className="l">Mentions</div><div className="k">{person.numbers?.mentions ?? '–'}</div></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       );
     }
 
-    function WavyPath({people,onOpen}) {
+    function CircleRow({ person, align='left', size='md', onOpen }) {
+      const sizeMap = { sm: 88, md: 112, lg: 144 };
+      const px = sizeMap[size] || 112;
       return (
-        <div style={{position:'relative'}}>
-          <div className="path-line"></div>
-          {people.map((p,i)=>(
-            <CircleTile key={p.id} person={p} onOpen={onOpen} align={i%2===0?'left':'right'} size={i%5===0?'lg':i%3===0?'sm':'md'} />
+        <div className="fade" style={{display:'flex', justifyContent: align==='right' ? 'flex-end' : 'flex-start', margin:'2rem 0', position:'relative'}}>
+          <div className="circle-tile" style={{ width:px, height:px }} onClick={() => onOpen(person)} aria-label={`Open details for ${person.name}`}>
+            {person.headshot
+              ? <img src={person.headshot} alt={person.name} />
+              : <div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-weight:600;color:#64748b;background:#f1f5f9">{initials(person.name)}</div>}
+            <div className="circle-caption">{person.name}</div>
+          </div>
+          <div className="blurb">
+            <div className="role">{person.title}</div>
+            <div><em>“{person.quote}”</em></div>
+            <div className="chips">{(person.tags||[]).slice(0,3).map(t => <span className="chip" key={t}>{t}</span>)}</div>
+          </div>
+        </div>
+      );
+    }
+
+    function WavyPath({ people, onOpen }) {
+      return (
+        <div className="path">
+          <div className="path-line" aria-hidden="true"></div>
+          {people.map((p, i) => (
+            <CircleRow key={p.id} person={p} onOpen={onOpen} align={i % 2 === 0 ? 'left' : 'right'} size={ i % 5 === 0 ? 'lg' : i % 3 === 0 ? 'sm' : 'md' } />
           ))}
         </div>
       );
     }
 
-    function Detail({person,onClose}){
-      if(!person) return null;
-      return (
-        <div className="detail" onClick={onClose}>
-          <div className="detail-box" onClick={e=>e.stopPropagation()}>
-            <h2>{person.name}</h2>
-            <h4>{person.title}</h4>
-            <p><em>“{person.quote}”</em></p>
-            <p>{person.summary}</p>
-            <div className="tags">{person.tags.map(t=><span key={t}>{t}</span>)}</div>
-            <p style={{marginTop:'1rem'}}>{person.details}</p>
-            <button onClick={onClose}>Close</button>
-          </div>
-        </div>
-      );
-    }
-
     function App(){
-      const [query,setQuery]=useState("");
-      const [selected,setSelected]=useState(null);
-      const filtered = useMemo(()=>{
-        const q=query.toLowerCase();
-        return DATA.filter(p=>p.name.toLowerCase().includes(q)||p.title.toLowerCase().includes(q)||p.quote.toLowerCase().includes(q)||p.summary.toLowerCase().includes(q)||p.tags.some(t=>t.toLowerCase().includes(q)));
-      },[query]);
+      const [query, setQuery] = useState("");
+      const [selected, setSelected] = useState(null);
+
+      const filtered = useMemo(() => {
+        const q = query.trim().toLowerCase();
+        return DATA.filter(p => {
+          const inText =
+            p.name.toLowerCase().includes(q) ||
+            p.title.toLowerCase().includes(q) ||
+            p.quote.toLowerCase().includes(q) ||
+            p.summary.toLowerCase().includes(q) ||
+            (p.tags||[]).some(t => t.toLowerCase().includes(q));
+          return (!q || inText);
+        });
+      }, [query]);
+
+      // wire the external search input
+      React.useEffect(() => {
+        const el = document.getElementById("search");
+        if (!el) return;
+        const handler = (e) => setQuery(e.target.value);
+        el.addEventListener("input", handler);
+        return () => el.removeEventListener("input", handler);
+      }, []);
+
       return (
-        <div className="container">
-          <h1>Interview Insights Collage — Path View</h1>
-          <input className="search" placeholder="Search…" value={query} onChange={e=>setQuery(e.target.value)} />
+        <div>
           <WavyPath people={filtered} onOpen={setSelected} />
-          <Detail person={selected} onClose={()=>setSelected(null)} />
+          <Modal person={selected} onClose={() => setSelected(null)} />
         </div>
       );
     }
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+    ReactDOM.createRoot(document.getElementById('app')).render(<App />);
   </script>
 </body>
 </html>
