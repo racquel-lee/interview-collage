@@ -21,16 +21,18 @@
     .num .l{ font-size:14px; color:var(--muted); }
 
     .path { position:relative; padding: 24px 0 8px; }
-    .center-line { position:absolute; left:50%; top:0; bottom:0; width:2px; background:linear-gradient(to bottom, transparent, var(--brand-100), transparent); transform:translateX(-50%); pointer-events:none; z-index:0; }
+    /* push the vertical line behind everything */
+    .center-line { position:absolute; left:50%; top:0; bottom:0; width:2px; background:linear-gradient(to bottom, transparent, var(--brand-100), transparent); transform:translateX(-50%); pointer-events:none; z-index:-1; }
 
     .row { position:relative; display:flex; align-items:center; gap:24px; margin: 2.4rem 0; }
     .row.left { justify-content:flex-start; }
     .row.right { justify-content:flex-end; }
-    .row .connector { position:absolute; top:50%; height:3px; width:min(260px, 22vw); background:var(--brand-100); z-index:0; }
+    /* and the connectors too */
+    .row .connector { position:absolute; top:50%; height:3px; width:min(260px, 22vw); background:var(--brand-100); z-index:-1; }
     .row.left .connector { right: calc(50% + 1px); }
     .row.right .connector { left: calc(50% + 1px); }
 
-    /* make the vertical rhythm delightfully uneven */
+    /* uneven winding rhythm */
     .row:nth-child(3n+1){ margin:3.2rem 0; }
     .row:nth-child(3n+2){ margin:2.0rem 0; }
     .row:nth-child(3n){ margin:4.2rem 0; }
@@ -41,15 +43,21 @@
     .cap { position:absolute; left:12px; right:12px; bottom:12px; background:var(--brand-600); color:#fff; text-align:center; padding:6px 10px; border-radius:999px; font-size:12px; }
 
     .role { font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); }
-    .preview{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; box-shadow:0 4px 16px rgba(0,0,0,.06); max-width:460px; }
+
+    /* the short preview is a real card and sits above lines */
+    .preview{
+      position:relative; z-index:2;
+      background:#fff; border:1px solid var(--line); border-radius:12px;
+      padding:12px 14px; box-shadow:0 6px 18px rgba(0,0,0,.08); max-width:460px;
+    }
     .preview .short{ font-style:italic; margin-top:6px; }
-    .preview .actions{ display:flex; align-items:center; gap:10px; margin-top:10px; }
-    .btn{ appearance:none; border:1px solid var(--line); background:#fff; border-radius:999px; padding:6px 10px; font-size:12px; cursor:pointer; }
-    .btn:hover{ box-shadow:0 0 0 3px var(--brand-100); border-color: var(--brand-600); }
-    .chev{ display:inline-block; transition: transform .2s ease; }
-    .chev.open{ transform: rotate(180deg); }
-    .expand { margin-top:10px; background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; box-shadow:0 12px 40px rgba(0,0,0,.12); max-width:460px; }
-    .expand h4{ margin:0 0 6px; font-size:16px; color:var(--brand-600);} 
+
+    /* expanded long quote also above lines */
+    .expand {
+      position:relative; z-index:2;
+      margin-top:10px; background:#fff; border:1px solid var(--line);
+      border-radius:12px; padding:12px 14px; box-shadow:0 12px 40px rgba(0,0,0,.12); max-width:460px;
+    }
     .expand p{ margin:6px 0; line-height:1.6; }
 
     .fade { opacity:0; transform: translateY(10px); animation: fade .45s ease-out forwards; }
@@ -63,15 +71,15 @@
     const { useState, useMemo } = React;
 
     const PEOPLE = [
-      { id:"p1", name:"Tony G.", title:"Community Companion Volunteer, Neighbor", headshot:"https://picsum.photos/seed/tonyg/800", quote:"It's just much bigger than I thought.", details:"The scope, frankly, because there are so many arms and legs and tentacles that go out into the community, even just getting the tour with you today and hearing about all the different programs and not only what happens here in this building but what happens in other places within the city and how far reaching it is. It's just much bigger than I thought." },
-      { id:"p2", name:"Lynn", title:"Settlement House Advocate, Neighbor, Former Staff", headshot:"https://picsum.photos/seed/lynn/800", quote:"Settlement houses are for everybody…", details:"Among the things I love about the settlement house model... settlement houses are for everybody, and we all have the same basic human needs, no matter what our economic situation is. I think there are financial choices to be made about where you invest flexible money, and economic need is a key criterion in making those decisions. But I think a settlement house is not a place only for low income people. It's a place for people of the neighborhood. We all want our kids to learn and we all want to age safely and we all want compassion when we're in pain." },
-      { id:"p3", name:"Amra", title:"Neighbor, mom", headshot:"https://picsum.photos/seed/amra/800", quote:"I feel like it serves a sliver of people that I'm not a part of.", details:"I would like to be more involved, and I would like my kids to be involved as well. Maybe there's a way to expand and open the door to kids and families... But I feel like it's sort of insular. I don't feel very connected to it as a person who lives across the street. I feel like it serves a sliver of people that I'm not a part of." },
-      { id:"p4", name:"Rosie", title:"Neighbor, mom", headshot:"https://picsum.photos/seed/rosie/800", quote:"We have something right in our backyard, but we have no access to it.", details:"Our kids have no place to learn how to swim. Even if we wanted private swimming classes, you have to go to certain places, and if they want to swim during winter or fall or spring - not just summer - there's no option. Whereas there is this option that's right there, but it's only limited to certain families... We have something right in our backyard, but we have no access to it. That's as simple as I put it." },
-      { id:"p5", name:"Jade", title:"Board member, daughter of OAC members", headshot:"https://picsum.photos/seed/jade/800", quote:"It's been life changing for them.", details:"It's been life changing for them... They go for breakfast almost every day. They do swim couple of times a week. They have joined hobbies they never did their entire life... because they grew up in China during the Cultural Revolution, where arts were shut down, schools were shut down. My mom was sent to like a labor camp to grow crops. So it's like a time where they're actually exploring other parts of themselves... My mom has found that she is great at painting. So she's been doing watercolors, acrylics... More important than that, they built community. They have made some really great friends." },
-      { id:"p6", name:"Steve", title:"Board Member, Neighbor", headshot:"https://picsum.photos/seed/steve/800", quote:"Good boards bridge vision and neighborhood needs.", details:"Good boards bridge vision and neighborhood needs." },
-      { id:"p7", name:"Arabelle", title:"Member, Neighbor", headshot:"https://picsum.photos/seed/arabelle/800", quote:"I joined because I wanted a space to connect.", details:"I joined because I wanted a space to connect." },
-      { id:"p8", name:"Julie", title:"Member, Neighbor", headshot:"https://picsum.photos/seed/julie/800", quote:"Membership means shared responsibility.", details:"Membership means shared responsibility." },
-      { id:"p9", name:"Tony L.", title:"Member", headshot:"https://picsum.photos/seed/tonyl/800", quote:"Showing up is powerful in itself.", details:"Showing up is powerful in itself." }
+      { id:"p1", name:"Tony G.", title:"Community Companion Volunteer, Neighbor", headshot:"https://randomuser.me/api/portraits/men/62.jpg", quote:"It's just much bigger than I thought.", details:"The scope, frankly, because there are so many arms and legs and tentacles that go out into the community, even just getting the tour with you today and hearing about all the different programs and not only what happens here in this building but what happens in other places within the city and how far reaching it is. It's just much bigger than I thought." },
+      { id:"p2", name:"Lynn", title:"Settlement House Advocate, Neighbor, Former Staff", headshot:"https://randomuser.me/api/portraits/women/68.jpg", quote:"Settlement houses are for everybody…", details:"Among the things I love about the settlement house model... settlement houses are for everybody, and we all have the same basic human needs, no matter what our economic situation is. I think there are financial choices to be made about where you invest flexible money, and economic need is a key criterion in making those decisions. But I think a settlement house is not a place only for low income people. It's a place for people of the neighborhood. We all want our kids to learn and we all want to age safely and we all want compassion when we're in pain." },
+      { id:"p3", name:"Amra", title:"Neighbor, mom", headshot:"https://randomuser.me/api/portraits/women/22.jpg", quote:"I feel like it serves a sliver of people that I'm not a part of.", details:"I would like to be more involved, and I would like my kids to be involved as well. Maybe there's a way to expand and open the door to kids and families... But I feel like it's sort of insular. I don't feel very connected to it as a person who lives across the street. I feel like it serves a sliver of people that I'm not a part of." },
+      { id:"p4", name:"Rosie", title:"Neighbor, mom", headshot:"https://randomuser.me/api/portraits/women/36.jpg", quote:"We have something right in our backyard, but we have no access to it.", details:"Our kids have no place to learn how to swim. Even if we wanted private swimming classes, you have to go to certain places, and if they want to swim during winter or fall or spring - not just summer - there's no option. Whereas there is this option that's right there, but it's only limited to certain families... We have something right in our backyard, but we have no access to it. That's as simple as I put it." },
+      { id:"p5", name:"Jade", title:"Board member, daughter of OAC members", headshot:"https://randomuser.me/api/portraits/women/12.jpg", quote:"It's been life changing for them.", details:"It's been life changing for them... They go for breakfast almost every day. They do swim couple of times a week. They have joined hobbies they never did their entire life... because they grew up in China during the Cultural Revolution, where arts were shut down, schools were shut down. My mom was sent to like a labor camp to grow crops. So it's like a time where they're actually exploring other parts of themselves... My mom has found that she is great at painting. So she's been doing watercolors, acrylics... More important than that, they built community. They have made some really great friends." },
+      { id:"p6", name:"Steve", title:"Board Member, Neighbor", headshot:"https://randomuser.me/api/portraits/men/41.jpg", quote:"Good boards bridge vision and neighborhood needs.", details:"Good boards bridge vision and neighborhood needs." },
+      { id:"p7", name:"Arabelle", title:"Member, Neighbor", headshot:"https://randomuser.me/api/portraits/women/27.jpg", quote:"I joined because I wanted a space to connect.", details:"I joined because I wanted a space to connect." },
+      { id:"p8", name:"Julie", title:"Member, Neighbor", headshot:"https://randomuser.me/api/portraits/women/48.jpg", quote:"Membership means shared responsibility.", details:"Membership means shared responsibility." },
+      { id:"p9", name:"Tony L.", title:"Member", headshot:"https://randomuser.me/api/portraits/men/75.jpg", quote:"Showing up is powerful in itself.", details:"Showing up is powerful in itself." }
     ];
 
     function CircleRow({ person, align='left', expanded=false, onEnter, onLeave, onToggle }){
@@ -79,24 +87,17 @@
       return (
         <div className={`row ${align} fade`} onMouseEnter={()=>onEnter(person.id)} onMouseLeave={onLeave}>
           <div className="connector" aria-hidden="true"></div>
-          {/* Circle */}
           <div className="circle" style={{ width:px, height:px }} onClick={()=>onToggle(person.id)}>
             <img src={person.headshot} alt={person.name} />
             <div className="cap">{person.name}</div>
           </div>
-          {/* Static short preview box */}
           <div style={{maxWidth:460}}>
             <div className="preview" onClick={()=>onToggle(person.id)}>
               <div className="role">{person.title}</div>
               <div className="short">“{person.quote}”</div>
-              <div className="actions">
-                <button className="btn" onClick={(e)=>{e.stopPropagation(); navigator.clipboard?.writeText(person.quote).catch(()=>{});}}>Copy quote</button>
-                <span className={`chev ${expanded? 'open':''}`} aria-hidden>▾</span>
-              </div>
             </div>
             {expanded && (
               <div className="expand">
-                <h4>Longer insight</h4>
                 <p><em>“{person.details || person.quote}”</em></p>
               </div>
             )}
