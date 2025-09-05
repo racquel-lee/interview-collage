@@ -70,7 +70,7 @@
       { id:"p2", name:"Lynn", title:"Settlement House Advocate, Neighbor, Former Staff", headshot:"https://picsum.photos/seed/lynn/800", quote:"Settlement houses are for everybody, and we all have the same basic human needs, no matter what our economic situation is.", tags:["settlement-house","belonging","equity"], numbers:{}, summary:"Believes the settlement house model serves the whole neighborhood—not only low-income residents.", details:"Among the things I love about the settlement house model... settlement houses are for everybody, and we all have the same basic human needs, no matter what our economic situation is. I think there are financial choices to be made about where you invest flexible money, and economic need is a key criterion in making those decisions. But I think a settlement house is not a place only for low income people. It's a place for people of the neighborhood. We all want our kids to learn and we all want to age safely and we all want compassion when we're in pain." },
       { id:"p3", name:"Amra", title:"Neighbor, mom", headshot:"https://picsum.photos/seed/amra/800", quote:"I feel like it serves a sliver of people that I'm not a part of.", tags:["inclusion","access","engagement"], numbers:{}, summary:"Wants more ways for neighborhood families to participate; currently feels the organization is insular.", details:"I would like to be more involved, and I would like my kids to be involved as well. Maybe there's a way to expand and open the door to kids and families... But I feel like it's sort of insular. I don't feel very connected to it as a person who lives across the street. I feel like it serves a sliver of people that I'm not a part of." },
       { id:"p4", name:"Rosie", title:"Neighbor, mom", headshot:"https://picsum.photos/seed/rosie/800", quote:"We have something right in our backyard, but we have no access to it.", tags:["access","aquatics","families"], numbers:{}, summary:"Calls out lack of access to swimming facilities for kids during most of the year despite nearby resources.", details:"Our kids have no place to learn how to swim. Even if we wanted private swimming classes, you have to go to certain places, and if they want to swim during winter or fall or spring - not just summer - there's no option. Whereas there is this option that's right there, but it's only limited to certain families... We have something right in our backyard, but we have no access to it. That's as simple as I put it." },
-      { id:"p5", name:"Jade", title:"Board Member, Neighbor", headshot:"https://picsum.photos/seed/jade/800", quote:"Board service is about listening as much as leading.", tags:["board","leadership"], numbers:{}, summary:"Emphasizes that board members should be rooted in community voices.", details:"Being on the board is not only about governance; it’s about making sure neighbors’ perspectives are heard in decisions." },
+      { id:"p5", name:"Jade", title:"Board member, daughter of OAC members", headshot:"https://picsum.photos/seed/jade/800", quote:"It's been life changing for them.", tags:["board","family","impact"], numbers:{}, summary:"Describes the program's transformative impact on her parents' daily life and community.", details:"It's been life changing for them... They go for breakfast almost every day. They do swim couple of times a week. They have joined hobbies they never did their entire life... because they grew up in China during the Cultural Revolution, where arts were shut down, schools were shut down. My mom was sent to like a labor camp to grow crops. So it's like a time where they're actually exploring other parts of themselves... My mom has found that she is great at painting. So she's been doing watercolors, acrylics... More important than that, they built community. They have made some really great friends." },
       { id:"p6", name:"Steve", title:"Board Member, Neighbor", headshot:"https://picsum.photos/seed/steve/800", quote:"Good boards bridge vision and neighborhood needs.", tags:["board","vision"], numbers:{}, summary:"Stresses that boards should balance strategy with local realities.", details:"A strong board creates space for new ideas but grounds them in what the community actually needs." },
       { id:"p7", name:"Arabelle", title:"Member, Neighbor", headshot:"https://picsum.photos/seed/arabelle/800", quote:"I joined because I wanted a space to connect.", tags:["member","connection"], numbers:{}, summary:"Sees membership as a doorway to connection and belonging.", details:"Being a member has given me chances to meet neighbors, join activities, and feel like I belong here." },
       { id:"p8", name:"Julie", title:"Member, Neighbor", headshot:"https://picsum.photos/seed/julie/800", quote:"Membership means shared responsibility.", tags:["member","community"], numbers:{}, summary:"Feels membership is about showing up and contributing to collective life.", details:"It’s not just about receiving programs but being part of sustaining them." },
@@ -118,7 +118,6 @@
       return (
         <div className={"row "+align+" fade"}>
           <div className="connector" aria-hidden="true"></div>
-          {/* Circle */}
           <button className="circle-btn" onClick={()=>onOpen(person)} style={{ width:px, height:px }} aria-label={`Open details for ${person.name}`}>
             {person.headshot ? (
               <img className="circle-img" src={person.headshot} alt={person.name} />
@@ -127,7 +126,6 @@
             )}
             <div className="cap">{person.name}</div>
           </button>
-          {/* Blurb */}
           <div className="blurb">
             <div className="role">{person.title}</div>
             <div><em>“{person.quote}”</em></div>
@@ -165,6 +163,3 @@
 
       return (
         <div className="container">
-          <div style={{display:'flex', gap:'1.5rem', flexWrap:'wrap', justifyContent:'center', marginBottom:'1.5rem'}}>
-            <div style={{flex:'1 1 200px', background:'var(--brand-100)', border:'1px solid var(--ring)', borderRadius:'12px', padding:'1rem', textAlign:'center'}}>
-              <div style={{font
