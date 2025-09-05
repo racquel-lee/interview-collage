@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Interview Insights Collage</title>
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-  <script src="https://unpkg.com/framer-motion/dist/framer-motion.umd.js"></script>
-  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
   <style>
     body { font-family: sans-serif; background:#fafafa; margin:0; padding:0; }
     .container { max-width: 900px; margin:0 auto; padding: 2rem; }
@@ -20,6 +18,10 @@
     .detail { position:fixed; inset:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; }
     .detail-box { background:white; max-width:600px; padding:1rem; border-radius:12px; }
     .tags span { display:inline-block; background:#eee; border-radius:10px; padding:2px 8px; margin-right:4px; font-size:12px; }
+
+    /* simple fade-in utility (avoid external libs) */
+    .fade { opacity: 0; transform: translateY(8px); animation: fadeIn .45s ease-out forwards; }
+    @keyframes fadeIn { to { opacity: 1; transform: none; } }
   </style>
 </head>
 <body>
@@ -27,7 +29,6 @@
 
   <script type="text/babel">
     const { useState, useMemo } = React;
-    const { motion } = window['framer-motion'];
 
     const DATA = [
       { id:"p1", name:"Alex Kim", title:"Nurse Manager", headshot:"https://images.unsplash.com/photo-1603415526960-f7e0328d13cf?q=80&w=300", quote:"We lose context during handoffs—people need one clear source of truth.", tags:["handoff","ops"], numbers:{ sampleSize:12, sentiment:0.76, mentions:18 }, summary:"Handoffs are inconsistent across units; staff maintain personal notes.", details:"Across 12 interviews, handoffs surfaced as the #1 friction. People rely on unofficial documents and hallway updates."},
@@ -39,12 +40,12 @@
     function CircleTile({ person, align, size, onOpen }) {
       const sizePx = size==='lg'?160:size==='sm'?100:130;
       return (
-        <motion.div initial={{opacity:0,y:20}} whileInView={{opacity:1,y:0}} viewport={{once:true,amount:0.3}} transition={{duration:0.4}} style={{display:'flex', justifyContent:align==='right'?'flex-end':'flex-start', margin:'2rem 0', position:'relative'}}>
+        <div className="fade"$1>
           <div className="circle-tile" style={{width:sizePx, height:sizePx}} onClick={()=>onOpen(person)}>
             {person.headshot? <img src={person.headshot} alt={person.name}/> : <div>{person.name}</div>}
             <div className="circle-caption">{person.name}</div>
           </div>
-        </motion.div>
+        </div>
       );
     }
 
