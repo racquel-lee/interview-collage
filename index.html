@@ -34,11 +34,10 @@
     .circle img { width:100%; height:100%; object-fit:cover; display:block; }
     .cap { position:absolute; left:12px; right:12px; bottom:12px; background:var(--brand-600); color:#fff; text-align:center; padding:6px 10px; border-radius:999px; font-size:12px; }
 
-    .blurb { position:absolute; top:50%; transform:translateY(-50%); z-index:2; max-width: 420px; padding:12px 14px; font-size:15px; color:#111; font-style:italic; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 3px 14px rgba(0,0,0,.08); opacity:0; transition:opacity .3s; }
-    .row.left .blurb { left:calc(260px + 40px); }
-    .row.right .blurb { right:calc(260px + 40px); }
-    .circle:hover + .blurb { opacity:1; }
-    .role { font-size:12px; letter-spacing:.04em; text-transform:uppercase; color: var(--muted); margin-bottom: 6px; font-style: normal; }
+    .popup { position:fixed; max-width:380px; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 12px 40px rgba(0,0,0,.18); padding:16px; z-index:9999; }
+    .popup h3{ margin:0; font-size:18px; color:var(--brand-600); }
+    .popup .role{ font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-bottom:8px; }
+    .popup p{ font-size:14px; line-height:1.5; margin:6px 0; }
 
     .fade { opacity:0; transform: translateY(10px); animation: fade .45s ease-out forwards; }
     @keyframes fade { to { opacity:1; transform:none; } }
@@ -51,27 +50,33 @@
     const { useState, useMemo } = React;
 
     const PEOPLE = [
-      { id:"p1", name:"Tony G.", title:"Community Companion Volunteer, Neighbor", headshot:"https://picsum.photos/seed/tonyg/800", quote:"It's just much bigger than I thought." },
-      { id:"p2", name:"Lynn", title:"Settlement House Advocate, Neighbor, Former Staff", headshot:"https://picsum.photos/seed/lynn/800", quote:"Settlement houses are for everybody…" },
-      { id:"p3", name:"Amra", title:"Neighbor, mom", headshot:"https://picsum.photos/seed/amra/800", quote:"I feel like it serves a sliver of people that I'm not a part of." },
-      { id:"p4", name:"Rosie", title:"Neighbor, mom", headshot:"https://picsum.photos/seed/rosie/800", quote:"We have something right in our backyard, but we have no access to it." },
-      { id:"p5", name:"Jade", title:"Board member, daughter of OAC members", headshot:"https://picsum.photos/seed/jade/800", quote:"It's been life changing for them." },
-      { id:"p6", name:"Steve", title:"Board Member, Neighbor", headshot:"https://picsum.photos/seed/steve/800", quote:"Good boards bridge vision and neighborhood needs." },
-      { id:"p7", name:"Arabelle", title:"Member, Neighbor", headshot:"https://picsum.photos/seed/arabelle/800", quote:"I joined because I wanted a space to connect." },
-      { id:"p8", name:"Julie", title:"Member, Neighbor", headshot:"https://picsum.photos/seed/julie/800", quote:"Membership means shared responsibility." },
-      { id:"p9", name:"Tony L.", title:"Member", headshot:"https://picsum.photos/seed/tonyl/800", quote:"Showing up is powerful in itself." }
+      { id:"p1", name:"Tony G.", title:"Community Companion Volunteer, Neighbor", headshot:"https://picsum.photos/seed/tonyg/800", quote:"It's just much bigger than I thought.", details:"The scope, frankly, because there are so many arms and legs and tentacles that go out into the community, even just getting the tour with you today and hearing about all the different programs and not only what happens here in this building but what happens in other places within the city and how far reaching it is. It's just much bigger than I thought." },
+      { id:"p2", name:"Lynn", title:"Settlement House Advocate, Neighbor, Former Staff", headshot:"https://picsum.photos/seed/lynn/800", quote:"Settlement houses are for everybody…", details:"Among the things I love about the settlement house model... settlement houses are for everybody, and we all have the same basic human needs, no matter what our economic situation is. I think there are financial choices to be made about where you invest flexible money, and economic need is a key criterion in making those decisions. But I think a settlement house is not a place only for low income people. It's a place for people of the neighborhood. We all want our kids to learn and we all want to age safely and we all want compassion when we're in pain." },
+      { id:"p3", name:"Amra", title:"Neighbor, mom", headshot:"https://picsum.photos/seed/amra/800", quote:"I feel like it serves a sliver of people that I'm not a part of.", details:"I would like to be more involved, and I would like my kids to be involved as well. Maybe there's a way to expand and open the door to kids and families... But I feel like it's sort of insular. I don't feel very connected to it as a person who lives across the street. I feel like it serves a sliver of people that I'm not a part of." },
+      { id:"p4", name:"Rosie", title:"Neighbor, mom", headshot:"https://picsum.photos/seed/rosie/800", quote:"We have something right in our backyard, but we have no access to it.", details:"Our kids have no place to learn how to swim. Even if we wanted private swimming classes, you have to go to certain places, and if they want to swim during winter or fall or spring - not just summer - there's no option. Whereas there is this option that's right there, but it's only limited to certain families... We have something right in our backyard, but we have no access to it. That's as simple as I put it." },
+      { id:"p5", name:"Jade", title:"Board member, daughter of OAC members", headshot:"https://picsum.photos/seed/jade/800", quote:"It's been life changing for them.", details:"It's been life changing for them... They go for breakfast almost every day. They do swim couple of times a week. They have joined hobbies they never did their entire life... because they grew up in China during the Cultural Revolution, where arts were shut down, schools were shut down. My mom was sent to like a labor camp to grow crops. So it's like a time where they're actually exploring other parts of themselves... My mom has found that she is great at painting. So she's been doing watercolors, acrylics... More important than that, they built community. They have made some really great friends." },
+      { id:"p6", name:"Steve", title:"Board Member, Neighbor", headshot:"https://picsum.photos/seed/steve/800", quote:"Good boards bridge vision and neighborhood needs.", details:"Good boards bridge vision and neighborhood needs." },
+      { id:"p7", name:"Arabelle", title:"Member, Neighbor", headshot:"https://picsum.photos/seed/arabelle/800", quote:"I joined because I wanted a space to connect.", details:"I joined because I wanted a space to connect." },
+      { id:"p8", name:"Julie", title:"Member, Neighbor", headshot:"https://picsum.photos/seed/julie/800", quote:"Membership means shared responsibility.", details:"Membership means shared responsibility." },
+      { id:"p9", name:"Tony L.", title:"Member", headshot:"https://picsum.photos/seed/tonyl/800", quote:"Showing up is powerful in itself.", details:"Showing up is powerful in itself." }
     ];
 
-    function CircleRow({ person, align='left' }){
-      const px = 220; // slightly smaller for compact spacing
+    function CircleRow({ person, align='left', onHover, onOpen }){
+      const px = 220;
+      const enter = (e)=>{
+        const rect = e.currentTarget.getBoundingClientRect();
+        onHover && onHover(person, align, rect);
+      };
+      const leave = ()=> onHover && onHover(null, null, null);
+      const open = ()=> onOpen && onOpen(person);
       return (
         <div className={`row ${align} fade`}>
           <div className="connector" aria-hidden="true"></div>
-          <div className="circle" style={{ width:px, height:px }}>
+          <div className="circle" style={{ width:px, height:px }} onMouseEnter={enter} onMouseLeave={leave} onClick={open}>
             <img src={person.headshot} alt={person.name} />
             <div className="cap">{person.name}</div>
           </div>
-          <div className="blurb">
+          <div className="blurb" onMouseEnter={enter} onMouseLeave={leave} onClick={open}>
             <div className="role">{person.title}</div>
             <div><em>“{person.quote}”</em></div>
           </div>
@@ -79,8 +84,49 @@
       );
     }
 
+    function HoverCard({ person, align, rect }){
+      if(!person || !rect) return null;
+      const style = {
+        position:'fixed',
+        top: Math.round(rect.top + window.scrollY) + 14,
+        left: align==='right' ? Math.round(rect.left - 340) : Math.round(rect.right + 14),
+        width: 320,
+        zIndex: 30,
+        background:'#fff', border:'1px solid var(--line)', borderRadius:12, boxShadow:'0 12px 40px rgba(0,0,0,.18)', padding:'12px 14px'
+      };
+      return (
+        <div style={style} role="dialog" aria-label={`${person.name} details`}>
+          <div style={{fontWeight:700, color:'var(--brand-600)'}}>{person.name}</div>
+          <div className="muted" style={{fontSize:12, textTransform:'uppercase', letterSpacing:'.04em'}}>{person.title}</div>
+          <div style={{marginTop:8}}><em>“{person.details || person.quote}”</em></div>
+        </div>
+      );
+    }
+
+    function Modal({ person, onClose }){
+      if(!person) return null;
+      return (
+        <div style={{position:'fixed', inset:0, background:'rgba(0,0,0,.45)', display:'flex', alignItems:'center', justifyContent:'center', padding:16, zIndex:40}} onClick={onClose}>
+          <div style={{width:'min(760px,96vw)', background:'#fff', borderRadius:14, overflow:'hidden', boxShadow:'0 20px 80px rgba(0,0,0,.2)'}} onClick={(e)=>e.stopPropagation()}>
+            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:'14px 16px', borderBottom:'1px solid var(--line)', background:'var(--brand)', color:'#fff'}}>
+              <div>
+                <h2 style={{margin:0, fontSize:22}}>{person.name}</h2>
+                <div className="muted" style={{color:'#fff', opacity:.9}}>{person.title}</div>
+              </div>
+              <button onClick={onClose} style={{appearance:'none', border:'none', background:'transparent', color:'#fff', fontSize:22, cursor:'pointer'}}>×</button>
+            </div>
+            <div style={{padding:18}}>
+              <p style={{fontSize:16, lineHeight:1.7}}><em>“{person.details || person.quote}”</em></p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     function App(){
       const [q,setQ] = useState("");
+      const [hover,setHover] = useState({ person:null, align:null, rect:null });
+      const [selected, setSelected] = useState(null);
       const filtered = useMemo(()=>{
         const s=q.trim().toLowerCase();
         return PEOPLE.filter(p => p.name.toLowerCase().includes(s) || p.title.toLowerCase().includes(s) || p.quote.toLowerCase().includes(s));
@@ -93,14 +139,16 @@
             <div className="num"><div className="k">25</div><div className="l">Interviews</div></div>
           </div>
           <h1>Community Voices Project</h1>
-          <div className="muted">Hover a face to see a quote.</div>
-          <input aria-label="Search" placeholder="Search…" value={q} onChange={e=>setQ(e.target.value)} style={{margin:"1rem 0", width:"100%", maxWidth:520, padding:"14px 16px", border:"2px solid var(--line)", borderRadius:14, background:"#fff", fontSize:16}} />
+          <div className="muted">Hover a face to peek. Click to read the long quote.</div>
+          <input aria-label="Search" placeholder="Search…" value={q} onChange={e=>setQ(e.target.value)} style={{margin:"0.75rem 0", width:"100%", maxWidth:520, padding:"12px 14px", border:"2px solid var(--line)", borderRadius:14, background:"#fff", fontSize:16}} />
           <div className="path">
             <div className="center-line" aria-hidden="true"></div>
             {filtered.map((p,i)=> (
-              <CircleRow key={p.id} person={p} align={i%2===0? 'left':'right'} />
+              <CircleRow key={p.id} person={p} align={i%2===0? 'left':'right'} onHover={(person,align,rect)=>setHover({person,align,rect})} onOpen={setSelected} />
             ))}
           </div>
+          <HoverCard person={hover.person} align={hover.align} rect={hover.rect} />
+          <Modal person={selected} onClose={()=>setSelected(null)} />
         </div>
       );
     }
