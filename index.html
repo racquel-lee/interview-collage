@@ -11,30 +11,33 @@
     :root{ --bg:#e1d8d5; --ink:#643335; --muted:#855c5c; --line:#e5cfcf; --ring:#e1d8d5; --brand:#ef3340; --brand-600:#c52a34; --brand-100:#fdecee; }
     *{ box-sizing:border-box; }
     body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; background:var(--bg); margin:0; color:var(--ink); }
-    .container { max-width: 1100px; margin:0 auto; padding: 2.25rem 1rem; }
+    .container { max-width: 1100px; margin:0 auto; padding: 2rem 1rem; }
     h1 { font-size: clamp(28px, 3vw, 42px); font-weight:800; margin:0 0 .35rem; color: var(--brand-600); }
     .muted { color: var(--muted); }
 
-    .numbers { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin: 1rem 0 1.5rem; }
+    .numbers { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin: 1rem 0 1rem; }
     .num { flex:1 1 220px; background:var(--brand-100); border:1px solid var(--line); border-radius:12px; padding:1rem; text-align:center; }
     .num .k{ font-size:28px; font-weight:700; color:var(--brand-600); }
     .num .l{ font-size:14px; color:var(--muted); }
 
     .path { position:relative; padding: 24px 0 8px; }
     .center-line { position:absolute; left:50%; top:0; bottom:0; width:2px; background:linear-gradient(to bottom, transparent, var(--brand-100), transparent); transform:translateX(-50%); pointer-events:none; z-index:0; }
-    .row { position:relative; display:flex; align-items:center; gap:24px; margin: 3.5rem 0; }
+    .row { position:relative; display:flex; align-items:center; gap:24px; margin: 2rem 0; }
     .row.left { justify-content:flex-start; }
     .row.right { justify-content:flex-end; }
     .row .connector { position:absolute; top:50%; height:3px; width:min(260px, 22vw); background:var(--brand-100); z-index:0; }
     .row.left .connector { right: calc(50% + 1px); }
     .row.right .connector { left: calc(50% + 1px); }
 
-    .circle { position:relative; display:block; border-radius:999px; overflow:hidden; border:3px solid var(--ring); background:#fff; box-shadow:0 6px 20px rgba(100,51,53,.15); cursor:pointer; transition: box-shadow .25s; }
+    .circle { position:relative; display:block; border-radius:999px; overflow:hidden; border:3px solid var(--ring); background:#fff; box-shadow:0 6px 20px rgba(100,51,53,.15); transition: box-shadow .25s; }
     .circle:hover { box-shadow:0 0 0 5px var(--brand-100), 0 0 16px var(--brand); }
     .circle img { width:100%; height:100%; object-fit:cover; display:block; }
     .cap { position:absolute; left:12px; right:12px; bottom:12px; background:var(--brand-600); color:#fff; text-align:center; padding:6px 10px; border-radius:999px; font-size:12px; }
 
-    .blurb { position:relative; z-index:2; max-width: 440px; padding:12px 14px; font-size:16px; color:#111; font-style:italic; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 3px 14px rgba(0,0,0,.08); }
+    .blurb { position:absolute; top:50%; transform:translateY(-50%); z-index:2; max-width: 420px; padding:12px 14px; font-size:15px; color:#111; font-style:italic; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 3px 14px rgba(0,0,0,.08); opacity:0; transition:opacity .3s; }
+    .row.left .blurb { left:calc(260px + 40px); }
+    .row.right .blurb { right:calc(260px + 40px); }
+    .circle:hover + .blurb { opacity:1; }
     .role { font-size:12px; letter-spacing:.04em; text-transform:uppercase; color: var(--muted); margin-bottom: 6px; font-style: normal; }
 
     .fade { opacity:0; transform: translateY(10px); animation: fade .45s ease-out forwards; }
@@ -44,7 +47,7 @@
 <body>
   <div id="root"></div>
 
-  <script type="text/babel">
+  <script type="text/babel" data-presets="react,env">
     const { useState, useMemo } = React;
 
     const PEOPLE = [
@@ -60,14 +63,14 @@
     ];
 
     function CircleRow({ person, align='left' }){
-      const px = 260; // big circles
+      const px = 220; // slightly smaller for compact spacing
       return (
         <div className={`row ${align} fade`}>
           <div className="connector" aria-hidden="true"></div>
-          <a className="circle" style={{ width:px, height:px }} href="#" onClick={(e)=>e.preventDefault()}>
+          <div className="circle" style={{ width:px, height:px }}>
             <img src={person.headshot} alt={person.name} />
             <div className="cap">{person.name}</div>
-          </a>
+          </div>
           <div className="blurb">
             <div className="role">{person.title}</div>
             <div><em>“{person.quote}”</em></div>
@@ -90,7 +93,7 @@
             <div className="num"><div className="k">25</div><div className="l">Interviews</div></div>
           </div>
           <h1>Community Voices Project</h1>
-          <div className="muted">Click a face for a quote. (Pop-up details coming back next.)</div>
+          <div className="muted">Hover a face to see a quote.</div>
           <input aria-label="Search" placeholder="Search…" value={q} onChange={e=>setQ(e.target.value)} style={{margin:"1rem 0", width:"100%", maxWidth:520, padding:"14px 16px", border:"2px solid var(--line)", borderRadius:14, background:"#fff", fontSize:16}} />
           <div className="path">
             <div className="center-line" aria-hidden="true"></div>
