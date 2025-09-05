@@ -20,22 +20,23 @@
 
     /* PATH */
     .path { position:relative; padding: 24px 0 8px; }
-    .path-line { position:absolute; left:50%; top:0; bottom:0; width:2px; background:linear-gradient(to bottom, transparent, var(--brand-100), transparent); transform:translateX(-50%); pointer-events:none; }
+    .path-line { position:absolute; left:50%; top:0; bottom:0; width:2px; background:linear-gradient(to bottom, transparent, var(--brand-100), transparent); transform:translateX(-50%); pointer-events:none; z-index:0; }
     .row { position:relative; display:flex; align-items:center; gap:24px; margin: 4rem 0; }
     .row.left { justify-content:flex-start; }
     .row.right { justify-content:flex-end; }
-    .connector { position:absolute; top:50%; height:3px; width:min(260px, 20vw); background:var(--brand-100); }
+    .connector { position:absolute; top:50%; height:3px; width:min(260px, 20vw); background:var(--brand-100); z-index:0; }
     .row.left .connector { right: calc(50% + 1px); }
     .row.right .connector { left: calc(50% + 1px); }
 
     /* CIRCLES */
-    .circle-btn { position:relative; display:block; border-radius:999px; overflow:hidden; box-shadow:var(--shadow); border:3px solid var(--ring); background:#fff; cursor:pointer; }
+    .circle-btn { position:relative; display:block; border-radius:999px; overflow:hidden; box-shadow:var(--shadow); border:3px solid var(--ring); background:#fff; cursor:pointer; transition: box-shadow .25s; }
+    .circle-btn:hover { box-shadow:0 0 0 4px var(--brand-100), 0 0 12px var(--brand); }
     .circle-img { display:block; width:100%; height:100%; object-fit:cover; }
     .initials { display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-weight:700; color:#64748b; background:#f1f5f9; font-size: 32px; }
     .cap { position:absolute; left:12px; right:12px; bottom:12px; background:var(--brand-600); color:#fff; text-align:center; padding:6px 10px; border-radius:999px; font-size:12px; }
 
     /* BLURB */
-    .blurb { max-width: 420px; padding:12px 14px; font-size:16px; color:#111; font-style:italic; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 3px 14px rgba(0,0,0,.08); }
+    .blurb { position:relative; z-index:2; max-width: 420px; padding:12px 14px; font-size:16px; color:#111; font-style:italic; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 3px 14px rgba(0,0,0,.08); }
     .role { font-size:12px; letter-spacing:.04em; text-transform:uppercase; color: var(--muted); margin-bottom: 6px; font-style: normal; }
     .chips { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
     .chip { font-size:12px; border:1px solid var(--line); border-radius:999px; padding:3px 9px; color:var(--brand-600); background:var(--brand-100); }
@@ -65,50 +66,15 @@
     const { useState, useMemo } = React;
 
     const DATA = [
-      {
-        id:"p1",
-        name:"Tony",
-        title:"Community Companion Volunteer, Neighbor",
-        headshot:"https://picsum.photos/seed/tony/800",
-        quote:"It's just much bigger than I thought.",
-        tags:["scope","programs","community"],
-        numbers:{},
-        summary:"Surprised by the size and reach of programs—both inside the building and across the city.",
-        details:"The scope, frankly, because there are so many arms and legs and tentacles that go out into the community, even just getting the tour with you today and hearing about all the different programs and not only what happens here in this building but what happens in other places within the city and how far reaching it is. It's just much bigger than I thought."
-      },
-      {
-        id:"p2",
-        name:"Lynn",
-        title:"Settlement House Advocate, Neighbor, Former Staff",
-        headshot:"https://picsum.photos/seed/lynn/800",
-        quote:"Settlement houses are for everybody, and we all have the same basic human needs, no matter what our economic situation is.",
-        tags:["settlement-house","belonging","equity"],
-        numbers:{},
-        summary:"Believes the settlement house model serves the whole neighborhood—not only low-income residents.",
-        details:"Among the things I love about the settlement house model... settlement houses are for everybody, and we all have the same basic human needs, no matter what our economic situation is. I think there are financial choices to be made about where you invest flexible money, and economic need is a key criterion in making those decisions. But I think a settlement house is not a place only for low income people. It's a place for people of the neighborhood. We all want our kids to learn and we all want to age safely and we all want compassion when we're in pain."
-      },
-      {
-        id:"p3",
-        name:"Amra",
-        title:"Neighbor, mom",
-        headshot:"https://picsum.photos/seed/amra/800",
-        quote:"I feel like it serves a sliver of people that I'm not a part of.",
-        tags:["inclusion","access","engagement"],
-        numbers:{},
-        summary:"Wants more ways for neighborhood families to participate; currently feels the organization is insular.",
-        details:"I would like to be more involved, and I would like my kids to be involved as well. Maybe there's a way to expand and open the door to kids and families... But I feel like it's sort of insular. I don't feel very connected to it as a person who lives across the street. I feel like it serves a sliver of people that I'm not a part of."
-      },
-      {
-        id:"p4",
-        name:"Rosie",
-        title:"Neighbor, mom",
-        headshot:"https://picsum.photos/seed/rosie/800",
-        quote:"We have something right in our backyard, but we have no access to it.",
-        tags:["access","aquatics","families"],
-        numbers:{},
-        summary:"Calls out lack of access to swimming facilities for kids during most of the year despite nearby resources.",
-        details:"Our kids have no place to learn how to swim. Even if we wanted private swimming classes, you have to go to certain places, and if they want to swim during winter or fall or spring - not just summer - there's no option. Whereas there is this option that's right there, but it's only limited to certain families... We have something right in our backyard, but we have no access to it. That's as simple as I put it."
-      }
+      { id:"p1", name:"Tony G.", title:"Community Companion Volunteer, Neighbor", headshot:"https://picsum.photos/seed/tonyg/800", quote:"It's just much bigger than I thought.", tags:["scope","programs","community"], numbers:{}, summary:"Surprised by the size and reach of programs—both inside the building and across the city.", details:"The scope, frankly, because there are so many arms and legs and tentacles that go out into the community, even just getting the tour with you today and hearing about all the different programs and not only what happens here in this building but what happens in other places within the city and how far reaching it is. It's just much bigger than I thought." },
+      { id:"p2", name:"Lynn", title:"Settlement House Advocate, Neighbor, Former Staff", headshot:"https://picsum.photos/seed/lynn/800", quote:"Settlement houses are for everybody, and we all have the same basic human needs, no matter what our economic situation is.", tags:["settlement-house","belonging","equity"], numbers:{}, summary:"Believes the settlement house model serves the whole neighborhood—not only low-income residents.", details:"Among the things I love about the settlement house model... settlement houses are for everybody, and we all have the same basic human needs, no matter what our economic situation is. I think there are financial choices to be made about where you invest flexible money, and economic need is a key criterion in making those decisions. But I think a settlement house is not a place only for low income people. It's a place for people of the neighborhood. We all want our kids to learn and we all want to age safely and we all want compassion when we're in pain." },
+      { id:"p3", name:"Amra", title:"Neighbor, mom", headshot:"https://picsum.photos/seed/amra/800", quote:"I feel like it serves a sliver of people that I'm not a part of.", tags:["inclusion","access","engagement"], numbers:{}, summary:"Wants more ways for neighborhood families to participate; currently feels the organization is insular.", details:"I would like to be more involved, and I would like my kids to be involved as well. Maybe there's a way to expand and open the door to kids and families... But I feel like it's sort of insular. I don't feel very connected to it as a person who lives across the street. I feel like it serves a sliver of people that I'm not a part of." },
+      { id:"p4", name:"Rosie", title:"Neighbor, mom", headshot:"https://picsum.photos/seed/rosie/800", quote:"We have something right in our backyard, but we have no access to it.", tags:["access","aquatics","families"], numbers:{}, summary:"Calls out lack of access to swimming facilities for kids during most of the year despite nearby resources.", details:"Our kids have no place to learn how to swim. Even if we wanted private swimming classes, you have to go to certain places, and if they want to swim during winter or fall or spring - not just summer - there's no option. Whereas there is this option that's right there, but it's only limited to certain families... We have something right in our backyard, but we have no access to it. That's as simple as I put it." },
+      { id:"p5", name:"Jade", title:"Board Member, Neighbor", headshot:"https://picsum.photos/seed/jade/800", quote:"Board service is about listening as much as leading.", tags:["board","leadership"], numbers:{}, summary:"Emphasizes that board members should be rooted in community voices.", details:"Being on the board is not only about governance; it’s about making sure neighbors’ perspectives are heard in decisions." },
+      { id:"p6", name:"Steve", title:"Board Member, Neighbor", headshot:"https://picsum.photos/seed/steve/800", quote:"Good boards bridge vision and neighborhood needs.", tags:["board","vision"], numbers:{}, summary:"Stresses that boards should balance strategy with local realities.", details:"A strong board creates space for new ideas but grounds them in what the community actually needs." },
+      { id:"p7", name:"Arabelle", title:"Member, Neighbor", headshot:"https://picsum.photos/seed/arabelle/800", quote:"I joined because I wanted a space to connect.", tags:["member","connection"], numbers:{}, summary:"Sees membership as a doorway to connection and belonging.", details:"Being a member has given me chances to meet neighbors, join activities, and feel like I belong here." },
+      { id:"p8", name:"Julie", title:"Member, Neighbor", headshot:"https://picsum.photos/seed/julie/800", quote:"Membership means shared responsibility.", tags:["member","community"], numbers:{}, summary:"Feels membership is about showing up and contributing to collective life.", details:"It’s not just about receiving programs but being part of sustaining them." },
+      { id:"p9", name:"Tony L.", title:"Member", headshot:"https://picsum.photos/seed/tonyl/800", quote:"Showing up is powerful in itself.", tags:["member","participation"], numbers:{}, summary:"Believes consistent presence builds trust.", details:"Even just being present and engaged makes a difference in how neighbors relate and trust each other." }
     ];
 
     const initials = (name) => name.split(" ").map(p=>p[0]).join("").slice(0,2).toUpperCase();
@@ -201,24 +167,4 @@
         <div className="container">
           <div style={{display:'flex', gap:'1.5rem', flexWrap:'wrap', justifyContent:'center', marginBottom:'1.5rem'}}>
             <div style={{flex:'1 1 200px', background:'var(--brand-100)', border:'1px solid var(--ring)', borderRadius:'12px', padding:'1rem', textAlign:'center'}}>
-              <div style={{fontSize:'28px', fontWeight:700, color:'var(--brand-600)'}}>785</div>
-              <div className="muted" style={{fontSize:'14px'}}>Survey Responses</div>
-            </div>
-            <div style={{flex:'1 1 200px', background:'var(--brand-100)', border:'1px solid var(--ring)', borderRadius:'12px', padding:'1rem', textAlign:'center'}}>
-              <div style={{fontSize:'28px', fontWeight:700, color:'var(--brand-600)'}}>25</div>
-              <div className="muted" style={{fontSize:'14px'}}>Interviews</div>
-            </div>
-          </div>
-          <h1>Community Voices Project</h1>
-          <div className="muted">Click a face for context & analysis.</div>
-          <input className="search" placeholder="Search…" value={query} onChange={e=>setQuery(e.target.value)} />
-          <WavyPath people={filtered} onOpen={setSelected} />
-          <Modal person={selected} onClose={()=>setSelected(null)} />
-        </div>
-      );
-    }
-
-    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
-  </script>
-</body>
-</html>
+              <div style={{font
