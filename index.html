@@ -22,22 +22,28 @@
 
     .path { position:relative; padding: 24px 0 8px; }
     .center-line { position:absolute; left:50%; top:0; bottom:0; width:2px; background:linear-gradient(to bottom, transparent, var(--brand-100), transparent); transform:translateX(-50%); pointer-events:none; z-index:0; }
-    .row { position:relative; display:flex; align-items:center; gap:24px; margin: 2rem 0; }
+
+    .row { position:relative; display:flex; align-items:center; gap:24px; margin: 2.4rem 0; }
     .row.left { justify-content:flex-start; }
     .row.right { justify-content:flex-end; }
     .row .connector { position:absolute; top:50%; height:3px; width:min(260px, 22vw); background:var(--brand-100); z-index:0; }
     .row.left .connector { right: calc(50% + 1px); }
     .row.right .connector { left: calc(50% + 1px); }
 
+    /* make the vertical rhythm delightfully uneven */
+    .row:nth-child(3n+1){ margin:3.2rem 0; }
+    .row:nth-child(3n+2){ margin:2.0rem 0; }
+    .row:nth-child(3n){ margin:4.2rem 0; }
+
     .circle { position:relative; display:block; border-radius:999px; overflow:hidden; border:3px solid var(--ring); background:#fff; box-shadow:0 6px 20px rgba(100,51,53,.15); transition: box-shadow .25s; }
     .circle:hover { box-shadow:0 0 0 5px var(--brand-100), 0 0 16px var(--brand); }
     .circle img { width:100%; height:100%; object-fit:cover; display:block; }
     .cap { position:absolute; left:12px; right:12px; bottom:12px; background:var(--brand-600); color:#fff; text-align:center; padding:6px 10px; border-radius:999px; font-size:12px; }
 
-    .popup { position:fixed; max-width:380px; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 12px 40px rgba(0,0,0,.18); padding:16px; z-index:9999; }
-    .popup h3{ margin:0; font-size:18px; color:var(--brand-600); }
-    .popup .role{ font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-bottom:8px; }
-    .popup p{ font-size:14px; line-height:1.5; margin:6px 0; }
+    .role { font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); }
+    .expand { margin-top:10px; background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; box-shadow:0 12px 40px rgba(0,0,0,.12); max-width:460px; }
+    .expand h4{ margin:0 0 6px; font-size:16px; color:var(--brand-600);} 
+    .expand p{ margin:6px 0; line-height:1.6; }
 
     .fade { opacity:0; transform: translateY(10px); animation: fade .45s ease-out forwards; }
     @keyframes fade { to { opacity:1; transform:none; } }
@@ -61,63 +67,26 @@
       { id:"p9", name:"Tony L.", title:"Member", headshot:"https://picsum.photos/seed/tonyl/800", quote:"Showing up is powerful in itself.", details:"Showing up is powerful in itself." }
     ];
 
-    function CircleRow({ person, align='left', onHover, onOpen }){
-      const px = 220;
-      const enter = (e)=>{
-        const rect = e.currentTarget.getBoundingClientRect();
-        onHover && onHover(person, align, rect);
-      };
-      const leave = ()=> onHover && onHover(null, null, null);
-      const open = ()=> onOpen && onOpen(person);
+    function CircleRow({ person, align='left', expanded=false, onEnter, onLeave, onToggle }){
+      const px = 240;
       return (
-        <div className={`row ${align} fade`}>
+        <div className={`row ${align} fade`} onMouseEnter={()=>onEnter(person.id)} onMouseLeave={onLeave}>
           <div className="connector" aria-hidden="true"></div>
-          <div className="circle" style={{ width:px, height:px }} onMouseEnter={enter} onMouseLeave={leave} onClick={open}>
+          {/* Circle */}
+          <div className="circle" style={{ width:px, height:px }} onClick={()=>onToggle(person.id)}>
             <img src={person.headshot} alt={person.name} />
             <div className="cap">{person.name}</div>
           </div>
-          <div className="blurb" onMouseEnter={enter} onMouseLeave={leave} onClick={open}>
-            <div className="role">{person.title}</div>
-            <div><em>“{person.quote}”</em></div>
-          </div>
-        </div>
-      );
-    }
-
-    function HoverCard({ person, align, rect }){
-      if(!person || !rect) return null;
-      const style = {
-        position:'fixed',
-        top: Math.round(rect.top + window.scrollY) + 14,
-        left: align==='right' ? Math.round(rect.left - 340) : Math.round(rect.right + 14),
-        width: 320,
-        zIndex: 30,
-        background:'#fff', border:'1px solid var(--line)', borderRadius:12, boxShadow:'0 12px 40px rgba(0,0,0,.18)', padding:'12px 14px'
-      };
-      return (
-        <div style={style} role="dialog" aria-label={`${person.name} details`}>
-          <div style={{fontWeight:700, color:'var(--brand-600)'}}>{person.name}</div>
-          <div className="muted" style={{fontSize:12, textTransform:'uppercase', letterSpacing:'.04em'}}>{person.title}</div>
-          <div style={{marginTop:8}}><em>“{person.details || person.quote}”</em></div>
-        </div>
-      );
-    }
-
-    function Modal({ person, onClose }){
-      if(!person) return null;
-      return (
-        <div style={{position:'fixed', inset:0, background:'rgba(0,0,0,.45)', display:'flex', alignItems:'center', justifyContent:'center', padding:16, zIndex:40}} onClick={onClose}>
-          <div style={{width:'min(760px,96vw)', background:'#fff', borderRadius:14, overflow:'hidden', boxShadow:'0 20px 80px rgba(0,0,0,.2)'}} onClick={(e)=>e.stopPropagation()}>
-            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:'14px 16px', borderBottom:'1px solid var(--line)', background:'var(--brand)', color:'#fff'}}>
-              <div>
-                <h2 style={{margin:0, fontSize:22}}>{person.name}</h2>
-                <div className="muted" style={{color:'#fff', opacity:.9}}>{person.title}</div>
+          {/* Static short blurb */}
+          <div style={{maxWidth:460}}>
+            <div className="role" style={{marginBottom:6}}>{person.title}</div>
+            <div style={{fontStyle:'italic'}}>“{person.quote}”</div>
+            {expanded && (
+              <div className="expand">
+                <h4>Longer insight</h4>
+                <p><em>“{person.details || person.quote}”</em></p>
               </div>
-              <button onClick={onClose} style={{appearance:'none', border:'none', background:'transparent', color:'#fff', fontSize:22, cursor:'pointer'}}>×</button>
-            </div>
-            <div style={{padding:18}}>
-              <p style={{fontSize:16, lineHeight:1.7}}><em>“{person.details || person.quote}”</em></p>
-            </div>
+            )}
           </div>
         </div>
       );
@@ -125,12 +94,15 @@
 
     function App(){
       const [q,setQ] = useState("");
-      const [hover,setHover] = useState({ person:null, align:null, rect:null });
-      const [selected, setSelected] = useState(null);
+      const [expandedId, setExpandedId] = useState(null);
       const filtered = useMemo(()=>{
         const s=q.trim().toLowerCase();
         return PEOPLE.filter(p => p.name.toLowerCase().includes(s) || p.title.toLowerCase().includes(s) || p.quote.toLowerCase().includes(s));
       },[q]);
+
+      const onEnter = (id)=> setExpandedId(id);
+      const onLeave = ()=> setExpandedId(null);
+      const onToggle = (id)=> setExpandedId(prev => prev===id? null : id);
 
       return (
         <div className="container">
@@ -139,16 +111,14 @@
             <div className="num"><div className="k">25</div><div className="l">Interviews</div></div>
           </div>
           <h1>Community Voices Project</h1>
-          <div className="muted">Hover a face to peek. Click to read the long quote.</div>
+          <div className="muted">Short quote + connection stays visible. Hover (or tap) expands to the long quote.</div>
           <input aria-label="Search" placeholder="Search…" value={q} onChange={e=>setQ(e.target.value)} style={{margin:"0.75rem 0", width:"100%", maxWidth:520, padding:"12px 14px", border:"2px solid var(--line)", borderRadius:14, background:"#fff", fontSize:16}} />
           <div className="path">
             <div className="center-line" aria-hidden="true"></div>
             {filtered.map((p,i)=> (
-              <CircleRow key={p.id} person={p} align={i%2===0? 'left':'right'} onHover={(person,align,rect)=>setHover({person,align,rect})} onOpen={setSelected} />
+              <CircleRow key={p.id} person={p} align={i%2===0? 'left':'right'} expanded={expandedId===p.id} onEnter={onEnter} onLeave={onLeave} onToggle={onToggle} />
             ))}
           </div>
-          <HoverCard person={hover.person} align={hover.align} rect={hover.rect} />
-          <Modal person={selected} onClose={()=>setSelected(null)} />
         </div>
       );
     }
